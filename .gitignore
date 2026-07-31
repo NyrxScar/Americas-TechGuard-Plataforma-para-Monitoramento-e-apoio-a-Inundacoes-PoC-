@@ -1,0 +1,14 @@
+# Node.js
+node_modules/
+**/node_modules/
+package-lock.json
+
+# Python / Virtual Environments
+venv/
+.venv/
+**/venv/
+**/__pycache__/
+
+# Logs & Temp
+*.log
+.DS_Store
