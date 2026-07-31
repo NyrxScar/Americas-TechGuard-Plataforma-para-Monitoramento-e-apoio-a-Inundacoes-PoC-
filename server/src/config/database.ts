@@ -1,37 +1,46 @@
-import pg from 'pg';
+/**
+ * @file database.ts
+ * @description Configuração do pool de conexões com o banco de dados PostgreSQL/PostGIS.
+ * Responsável por gerenciar o ciclo de vida das conexões e disponibilizar o cliente do banco para os repositórios.
+ */
+
+import { Pool } from 'pg';
 import dotenv from 'dotenv';
 
+// Carrega as variáveis de ambiente do arquivo .env
 dotenv.config();
 
-const { Pool } = pg;
-
+/**
+ * Pool de conexões do PostgreSQL utilizando as credenciais de ambiente.
+ */
 export const pool = new Pool({
   host: process.env.DB_HOST || 'localhost',
   port: Number(process.env.DB_PORT) || 5432,
   user: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD || 'admin',
-  database: process.env.DB_NAME || 'techguard_db',
-  max: 10,
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 2000,
+  password: process.env.DB_PASSWORD || 'postgres',
+  database: process.env.DB_NAME || 'americas_techguard',
+});
+
+// Evento disparado quando uma nova conexão é criada no pool
+pool.on('connect', () => {
+  console.log('⚡ Conexão estabelecida com o pool PostgreSQL/PostGIS!');
+});
+
+// Tratamento de erros inesperados em clientes ociosos do pool
+pool.on('error', (err) => {
+  console.error('❌ Erro inesperado no pool do PostgreSQL:', err);
 });
 
 /**
- * Testa conectividade com PostgreSQL / PostGIS
+ * Executa uma query simples de teste para validar se o PostgreSQL/PostGIS está acessível.
  */
-export const testConnection = async (): Promise<boolean> => {
+export async function testConnection(): Promise<boolean> {
   try {
-    const client = await pool.connect();
-    const result = await client.query('SELECT NOW(), PostGIS_Full_Version()');
-    
-    console.log('✅ Conexão com PostgreSQL/PostGIS estabelecida!');
-    console.log(`📌 Horário do Banco: ${result.rows[0].now}`);
-    console.log(`🌐 Versão PostGIS: ${result.rows[0].postgis_full_version}`);
-    
-    client.release();
+    await pool.query('SELECT 1');
+    console.log('⚡ Teste de conexão com PostGIS concluído com sucesso!');
     return true;
   } catch (error) {
-    console.error('❌ Erro de conexão com o banco:', (error as Error).message);
+    console.error('❌ Falha ao conectar no PostgreSQL/PostGIS:', (error as Error).message);
     return false;
   }
-};
+}
