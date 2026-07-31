@@ -2,6 +2,7 @@
   "name": "americas-techguard-server",
   "version": "1.0.0",
   "description": "Backend API para o sistema de monitoramento de enchentes de Blumenau",
+  "type": "module",
   "main": "src/index.ts",
   "scripts": {
     "dev": "tsx watch src/index.ts",
