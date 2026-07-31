@@ -1,15 +1,15 @@
 {
   "compilerOptions": {
-    "target": "ES2022",                  /* Versão do JavaScript gerada na compilação */
-    "module": "NodeNext",                /* Suporte nativo a ES Modules no Node.js (import/export) */
-    "moduleResolution": "NodeNext",          /* Algoritmo de resolução de módulos moderno do Node */
-    "outDir": "./dist",                  /* Diretório onde os arquivos .js compilados serão salvos */
-    "rootDir": "./src",                  /* Diretório raiz dos arquivos fonte TypeScript */
-    "strict": true,                      /* Ativa todas as verificações estritas de tipo */
-    "esModuleInterop": true,             /* Permite interoperabilidade entre CommonJS e ES Modules */
-    "skipLibCheck": true,                /* Ignora verificação de tipos dentro das bibliotecas node_modules */
-    "forceConsistentCasingInFileNames": true, /* Exige consistência de maiúsculas/minúsculas nos imports */
-    "resolveJsonModule": true            /* Permite importar arquivos .json diretamente no código */
+    "target": "ES2022",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true
   },
-  "include": ["src/**/*"]                 /* Inclui todos os arquivos dentro de src/ na compilação */
+  "include": ["src/**/*"]
 }
