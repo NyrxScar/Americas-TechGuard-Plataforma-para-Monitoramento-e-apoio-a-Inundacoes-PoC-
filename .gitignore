@@ -16,3 +16,5 @@ venv/
 node_modules/
 dist/
 .env
+
+gis/output_rasters/dem_source.tif

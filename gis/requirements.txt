@@ -1,0 +1,13 @@
+whitebox
+geopandas
+rasterio
+rioxarray
+xarray
+numpy
+matplotlib
+contextily
+folium
+plotly
+pystac-client
+planetary-computer
+requests

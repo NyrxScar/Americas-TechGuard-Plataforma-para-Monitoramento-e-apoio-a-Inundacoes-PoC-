@@ -1,6 +1,6 @@
-paho-mqtt>=1.6.1
-requests>=2.31.0
-python-dotenv>=1.0.1
-shapely>=2.0.4
-geopandas>=0.14.4
-numpy>=1.26.4
+paho-mqtt>=2.1.0
+requests>=2.32.0
+python-dotenv>=1.0.0
+shapely>=2.0.0
+geopandas>=0.14.0
+numpy>=2.0.0
