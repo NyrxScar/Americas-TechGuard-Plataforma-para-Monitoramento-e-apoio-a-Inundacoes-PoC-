@@ -7,7 +7,8 @@
 const DATA_PATHS = {
     stations: "data/stations.json",
     telemetry: "data/telemetry.json",
-    shelters: "data/shelters.json"
+    shelters: "data/shelters.json",
+    riskMaps: "data/risk_maps.json"
 };
 
 
@@ -37,38 +38,53 @@ async function loadJSON(path) {
 
 async function loadApplicationData() {
     try {
-        // Os três arquivos são carregados ao mesmo tempo.
+
+        // Todos os arquivos são carregados ao mesmo tempo.
         const [
             stationsData,
             telemetryData,
-            sheltersData
+            sheltersData,
+            riskMapsData
         ] = await Promise.all([
             loadJSON(DATA_PATHS.stations),
             loadJSON(DATA_PATHS.telemetry),
-            loadJSON(DATA_PATHS.shelters)
+            loadJSON(DATA_PATHS.shelters),
+            loadJSON(DATA_PATHS.riskMaps)
         ]);
+
 
         // Retorna os dados organizados.
         return {
+
             stations: stationsData.stations,
+
             telemetry: telemetryData.telemetry,
+
             shelters: sheltersData.shelters,
 
+            riskMaps: riskMapsData.risk_maps,
+
+
             metadata: {
+
                 stations: stationsData.metadata,
+
                 telemetry: telemetryData.metadata,
-                shelters: sheltersData.metadata
+
+                shelters: sheltersData.metadata,
+
+                riskMaps: riskMapsData.metadata
             }
         };
 
+
     } catch (error) {
-        // Exibe o erro no console do navegador.
+
         console.error(
             "[AMERICAS TECHGUARD] Erro ao carregar os dados:",
             error
         );
 
-        // Interrompe a execução para evitar que o sistema use dados incompletos.
         throw error;
     }
 }
@@ -79,6 +95,7 @@ async function loadApplicationData() {
 // ----------------------------------------------------------------------------
 
 function getStationById(stations, stationId) {
+
     return stations.find(
         station => station.id === stationId
     );
@@ -90,21 +107,30 @@ function getStationById(stations, stationId) {
 // ----------------------------------------------------------------------------
 
 function combineStationsAndTelemetry(stations, telemetry) {
+
     return telemetry.map(reading => {
+
         const station = getStationById(
             stations,
             reading.station_id
         );
 
+
         return {
+
             ...reading,
 
             // Informações do nó.
             station: station || null,
 
             // Nome e região facilitam o uso nas páginas.
-            station_name: station?.name || "Nó não identificado",
-            region: station?.region || "Região não identificada"
+            station_name:
+                station?.name ||
+                "Nó não identificado",
+
+            region:
+                station?.region ||
+                "Região não identificada"
         };
     });
 }
@@ -115,22 +141,26 @@ function combineStationsAndTelemetry(stations, telemetry) {
 // ----------------------------------------------------------------------------
 
 function calculateTelemetrySummary(telemetry) {
+
     // Valores que possuem temperatura.
     const temperatures = telemetry
         .map(item => item.measurements.temperature_c)
         .filter(value => typeof value === "number");
+
 
     // Valores que possuem nível da água.
     const waterLevels = telemetry
         .map(item => item.measurements.water_level_m)
         .filter(value => typeof value === "number");
 
+
     // Valores que possuem chuva.
     const rainfallValues = telemetry
         .map(item => item.measurements.rainfall_mm)
         .filter(value => typeof value === "number");
 
-    // Calcula a temperatura média.
+
+    // Calcula temperatura média.
     const averageTemperature =
         temperatures.length > 0
             ? temperatures.reduce(
@@ -139,22 +169,41 @@ function calculateTelemetrySummary(telemetry) {
             ) / temperatures.length
             : null;
 
-    // Obtém o maior nível de água.
+
+    // Obtém maior nível de água.
     const highestWaterLevel =
         waterLevels.length > 0
             ? Math.max(...waterLevels)
             : null;
 
-    // Obtém o maior valor de chuva.
+
+    // Obtém maior chuva registrada.
     const highestRainfall =
         rainfallValues.length > 0
             ? Math.max(...rainfallValues)
             : null;
 
+
     return {
+
         averageTemperature,
+
         highestWaterLevel,
+
         highestRainfall,
+
         totalReadings: telemetry.length
     };
+}
+
+
+// ----------------------------------------------------------------------------
+// Procura um mapa de risco pelo seu identificador.
+// ----------------------------------------------------------------------------
+
+function getRiskMapById(riskMaps, id) {
+
+    return riskMaps.find(
+        map => map.id === id
+    );
 }

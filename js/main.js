@@ -1,123 +1,326 @@
 // ============================================================================
 // AMERICAS TECHGUARD
-// Inicialização e atualização da página inicial
+// Inicialização e atualização da Home Dashboard
 // ============================================================================
 
-document.addEventListener("DOMContentLoaded", async () => {
 
-console.log(
-    "[AMERICAS TECHGUARD] Iniciando aplicação..."
-);
-
-try {
-
-    // Carrega stations.json, telemetry.json e shelters.json.
-    const appData = await loadApplicationData();
+document.addEventListener(
+    "DOMContentLoaded",
+    async () => {
 
 
-    // Junta cada leitura às informações do nó correspondente.
-    const completeTelemetry =
-        combineStationsAndTelemetry(
-            appData.stations,
-            appData.telemetry
+    console.log(
+        "[AMERICAS TECHGUARD] Inicializando dashboard..."
+    );
+
+
+    try {
+
+
+        const appData =
+            await loadApplicationData();
+
+
+
+        const completeTelemetry =
+            combineStationsAndTelemetry(
+                appData.stations,
+                appData.telemetry
+            );
+
+
+
+        const summary =
+            calculateTelemetrySummary(
+                completeTelemetry
+            );
+
+
+
+        updateStationCards(
+            appData.stations
         );
 
 
-    // Calcula os valores gerais da telemetria.
-    const summary =
-        calculateTelemetrySummary(
+
+        updateTelemetryCards(
+            summary
+        );
+
+
+
+        updateShelterCard(
+            appData.shelters
+        );
+
+
+
+        updateCriticalSensors(
             completeTelemetry
         );
 
 
-    // --------------------------------------------------------------------
-    // Atualiza os valores visíveis na Home.
-    // --------------------------------------------------------------------
 
-    const temperatureElement =
-        document.getElementById(
-            "average-temperature"
+        loadHANDMap(
+            appData.riskMaps
         );
 
-    const waterLevelElement =
+
+
+        console.log(
+            "[AMERICAS TECHGUARD] Dashboard carregado."
+        );
+
+
+    } catch(error){
+
+
+        console.error(
+            "[AMERICAS TECHGUARD] Erro:",
+            error
+        );
+
+
+    }
+
+
+});
+
+
+
+
+
+// ============================================================================
+// Atualiza sensores
+// ============================================================================
+
+
+function updateStationCards(stations){
+
+
+    const online =
+        stations.filter(
+            station =>
+            station.status === "online"
+        ).length;
+
+
+
+    const offline =
+        stations.filter(
+            station =>
+            station.status !== "online"
+        ).length;
+
+
+
+    document
+    .getElementById(
+        "active-stations"
+    )
+    .textContent =
+        online;
+
+
+
+    document
+    .getElementById(
+        "offline-stations"
+    )
+    .textContent =
+        offline;
+
+
+}
+
+
+
+
+
+
+// ============================================================================
+// Atualiza dados ambientais
+// ============================================================================
+
+
+function updateTelemetryCards(summary){
+
+
+    const water =
         document.getElementById(
             "highest-water-level"
         );
 
-    const rainfallElement =
+
+    const rain =
         document.getElementById(
             "highest-rainfall"
         );
 
-    const stationsElement =
-        document.getElementById(
-            "total-stations"
-        );
 
+    if(water){
 
-    // Mostra a temperatura média.
-    if (
-        temperatureElement &&
-        summary.averageTemperature !== null
-    ) {
-        temperatureElement.textContent =
-            `${summary.averageTemperature.toFixed(1)} °C`;
+        water.textContent =
+            summary.highestWaterLevel !== null
+            ?
+            `${summary.highestWaterLevel.toFixed(2)} m`
+            :
+            "--";
+
     }
 
 
-    // Mostra o maior nível de água.
-    if (
-        waterLevelElement &&
-        summary.highestWaterLevel !== null
-    ) {
-        waterLevelElement.textContent =
-            `${summary.highestWaterLevel.toFixed(2)} m`;
+
+    if(rain){
+
+        rain.textContent =
+            summary.highestRainfall !== null
+            ?
+            `${summary.highestRainfall.toFixed(1)} mm`
+            :
+            "--";
+
     }
 
-
-    // Mostra o maior volume de chuva.
-    if (
-        rainfallElement &&
-        summary.highestRainfall !== null
-    ) {
-        rainfallElement.textContent =
-            `${summary.highestRainfall.toFixed(1)} mm`;
-    }
-
-
-    // Mostra a quantidade de nós cadastrados.
-    if (stationsElement) {
-        stationsElement.textContent =
-            `${appData.stations.length} nós`;
-    }
-
-
-    // --------------------------------------------------------------------
-    // Informações para teste no Console.
-    // --------------------------------------------------------------------
-
-    console.log(
-        "Dados carregados:",
-        appData
-    );
-
-    console.log(
-        "Telemetria organizada:",
-        completeTelemetry
-    );
-
-    console.log(
-        "Resumo da telemetria:",
-        summary
-    );
-
-} catch (error) {
-
-    console.error(
-        "[AMERICAS TECHGUARD] Falha ao iniciar:",
-        error
-    );
 
 }
 
-});
+
+
+
+
+
+// ============================================================================
+// Atualiza abrigos
+// ============================================================================
+
+
+function updateShelterCard(shelters){
+
+
+    const element =
+        document.getElementById(
+            "total-shelters"
+        );
+
+
+    if(element){
+
+        element.textContent =
+            shelters.length;
+
+    }
+
+
+}
+
+
+
+
+
+
+
+// ============================================================================
+// Sensores críticos
+// ============================================================================
+
+
+function updateCriticalSensors(
+    telemetry
+){
+
+
+    const container =
+        document.getElementById(
+            "critical-list"
+        );
+
+
+
+    if(!container)
+        return;
+
+
+
+    const critical =
+        telemetry.filter(
+            item =>
+            item.risk === "high" ||
+            item.risk === "critical"
+        );
+
+
+
+    if(critical.length === 0){
+
+
+        container.innerHTML = `
+
+        <p>
+        Nenhum sensor em estado crítico.
+        </p>
+
+        `;
+
+
+        return;
+
+    }
+
+
+
+    container.innerHTML =
+        critical.map(sensor => `
+
+        <div class="critical-item">
+
+            <strong>
+            ${sensor.station_name}
+            </strong>
+
+            <span>
+            ${sensor.measurements.water_level_m} m
+            </span>
+
+        </div>
+
+
+        `).join("");
+
+
+}
+
+
+
+
+
+
+
+// ============================================================================
+// GIS HAND
+// ============================================================================
+
+
+function loadHANDMap(
+    riskMaps
+){
+
+
+    const map =
+        getRiskMapById(
+            riskMaps,
+            "hand_blumenau"
+        );
+
+
+    if(map){
+
+        console.log(
+            "[GIS] HAND disponível:",
+            map.file
+        );
+
+    }
+
+
+}

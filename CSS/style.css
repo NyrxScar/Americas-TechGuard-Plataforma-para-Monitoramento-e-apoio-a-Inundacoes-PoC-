@@ -1,323 +1,991 @@
-/* ==================================================
-AMERICAS TECHGUARD
-ESTILOS GERAIS DA APLICAÇÃO
-================================================== */
+/* ==========================================================================
+   AMERICAS TECHGUARD
+   Centro Operacional Hidrológico
+   Dark Tech Interface
+========================================================================== */
 
-/* ==================================================
 
-1. PALETA DE CORES
-   ================================================== */
+/* ==========================================================================
+   RESET
+========================================================================== */
 
-:root {
-/* Azul mais escuro: fundo principal */
---color-background: #12184F;
-
-/* Azul escuro: barra lateral */
---color-sidebar: #1C2578;
-
-/* Azul médio: elementos secundários */
---color-secondary: #2531A1;
-
-/* Azul forte: efeitos de interação */
---color-hover: #2E3EC9;
-
-/* Azul principal: item ativo e destaques */
---color-primary: #3647ED;
-
-/* Cores dos textos */
---color-white: #FFFFFF;
---color-text-secondary: #BFC5FF;
-}
-
-/* ==================================================
-2. CONFIGURAÇÕES GERAIS
-================================================== */
-
-/*
-Remove margens e espaçamentos padrões
-aplicados pelo navegador.
-*/
 
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  }
 
-/*
-Define o comportamento geral do corpo da página.
-*/
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+
+}
+
+
+
 body {
-/* Fonte temporária */
-font-family: Arial, sans-serif;
 
-/* Cor de fundo geral */
-background-color: var(--color-background);
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
 
-/* Cor padrão dos textos */
-color: var(--color-white);
+    background:
+        #07111f;
 
-/* Impede barras de rolagem horizontais */
-overflow-x: hidden;
+    color:
+        #e8f1ff;
+
+    min-height:
+        100vh;
+
 }
 
-/* ==================================================
-3. BARRA LATERAL
-================================================== */
 
-/*
-Barra fixa no lado esquerdo.
-*/
+
+
+a {
+
+    text-decoration: none;
+
+    color: inherit;
+
+}
+
+
+
+
+/* ==========================================================================
+   SIDEBAR
+========================================================================== */
+
+
 .sidebar {
-/* Mantém a barra visível durante a rolagem */
-position: fixed;
 
-/* Posicionamento */
-top: 0;
-left: 0;
+    position: fixed;
 
-/* Ocupa toda a altura da tela */
-width: 260px;
-height: 100vh;
+    left: 0;
+    top: 0;
 
-/* Cor da barra lateral */
-background-color: var(--color-sidebar);
+    width: 270px;
 
-/* Organiza logo, menu e rodapé verticalmente */
-display: flex;
-flex-direction: column;
+    height: 100vh;
 
-/* Espaçamento interno */
-padding: 28px 18px;
+    background:
+        linear-gradient(
+            180deg,
+            #0b1b31,
+            #06101d
+        );
 
-/* Separação visual da área principal */
-border-right: 1px solid rgba(255, 255, 255, 0.08);
+    border-right:
+        1px solid rgba(
+            255,
+            255,
+            255,
+            0.08
+        );
+
+    display: flex;
+
+    flex-direction: column;
+
+    padding: 25px;
+
 }
 
-/* ==================================================
-4. IDENTIDADE DO PROJETO
-================================================== */
+
+
+
+/* ==========================================================================
+   BRAND
+========================================================================== */
+
 
 .brand {
-/* Coloca o ícone e o nome lado a lado */
-display: flex;
-align-items: center;
 
-/* Espaço entre o ícone e o texto */
-gap: 12px;
+    display: flex;
 
-/* Espaço abaixo da marca */
-margin-bottom: 45px;
+    align-items: center;
+
+    gap: 15px;
+
+    margin-bottom: 40px;
+
 }
 
-/*
-Logotipo temporário.
-Depois podemos trocar por uma imagem.
-*/
+
+
 .brand-icon {
-width: 48px;
-height: 48px;
 
-/* Centraliza as letras */
-display: flex;
-align-items: center;
-justify-content: center;
+    width: 55px;
 
-/* Cor de destaque */
-background-color: var(--color-primary);
+    height: 55px;
 
-/* Formato arredondado */
-border-radius: 14px;
+    display:flex;
 
-/* Texto */
-color: var(--color-white);
-font-weight: bold;
+    align-items:center;
+
+    justify-content:center;
+
+    font-size: 30px;
+
+    background:
+        rgba(
+            0,
+            174,
+            255,
+            0.12
+        );
+
+    border-radius: 14px;
+
 }
 
-/* Nome principal */
+
+
 .brand-text h1 {
-font-size: 18px;
-font-weight: 700;
+
+    font-size: 18px;
+
+    color:
+        #ffffff;
+
 }
 
-/* Subtítulo TECHGUARD */
+
+
 .brand-text span {
-font-size: 11px;
-letter-spacing: 2px;
 
-color: var(--color-text-secondary);
+    display:block;
+
+    font-size:12px;
+
+    color:
+        #8fa9c7;
+
+    margin-top:5px;
+
 }
 
-/* ==================================================
-5. MENU DE NAVEGAÇÃO
-================================================== */
+
+
+
+
+
+/* ==========================================================================
+   MENU
+========================================================================== */
+
 
 .navigation {
-/* Faz o menu ocupar o espaço disponível */
-flex: 1;
 
-/* Organiza os links verticalmente */
-display: flex;
-flex-direction: column;
+    display:flex;
 
-/* Espaçamento entre os itens */
-gap: 8px;
+    flex-direction:column;
+
+    gap:10px;
+
 }
 
-/*
-Item padrão do menu.
-*/
+
+
 .nav-item {
-/* Ícone e texto ficam lado a lado */
-display: flex;
-align-items: center;
 
-/* Espaçamento entre ícone e texto */
-gap: 14px;
+    display:flex;
 
-/* Espaçamento interno */
-padding: 14px 16px;
+    align-items:center;
 
-/* Remove o sublinhado dos links */
-text-decoration: none;
+    gap:12px;
 
-/* Cor padrão */
-color: var(--color-text-secondary);
+    padding:13px;
 
-/* Bordas arredondadas */
-border-radius: 12px;
+    border-radius:10px;
 
-/* Animação suave */
-transition: 0.2s ease;
+    color:
+        #b7c8df;
+
+    transition:
+        0.25s;
+
 }
 
-/*
-Efeito ao passar o mouse.
-*/
+
+
+.nav-item span {
+
+    font-size:20px;
+
+}
+
+
+
 .nav-item:hover {
-background-color: var(--color-hover);
 
-color: var(--color-white);
+    background:
+        rgba(
+            0,
+            174,
+            255,
+            0.1
+        );
+
+    color:white;
+
 }
 
-/*
-Página atualmente selecionada.
-*/
+
+
 .nav-item.active {
-background-color: var(--color-primary);
 
-color: var(--color-white);
+    background:
+        linear-gradient(
+            90deg,
+            #006eff,
+            #00b7ff
+        );
 
-font-weight: 600;
+    color:white;
+
 }
 
-/* Área reservada para os ícones */
-.nav-icon {
-width: 22px;
 
-/* Centraliza o ícone */
-text-align: center;
 
-font-size: 19px;
-}
 
-/* ==================================================
-6. RODAPÉ DA BARRA LATERAL
-================================================== */
+
+
+/* ==========================================================================
+   FOOTER SIDEBAR
+========================================================================== */
+
 
 .sidebar-footer {
-padding-top: 20px;
 
-border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top:auto;
+
+    font-size:13px;
+
+    color:
+        #91a5bd;
+
 }
 
-.sidebar-footer p {
-font-size: 12px;
 
-color: var(--color-text-secondary);
 
-text-align: center;
+.system-online {
+
+    display:block;
+
+    margin-top:10px;
+
+    color:
+        #45e38b;
+
 }
 
-/* ==================================================
-7. ÁREA PRINCIPAL
-================================================== */
 
-/*
-A margem esquerda evita que o conteúdo
-fique escondido atrás da barra lateral.
-*/
+
+
+
+
+/* ==========================================================================
+   CONTEÚDO
+========================================================================== */
+
+
 .main-content {
-min-height: 100vh;
 
-margin-left: 260px;
 
-padding: 45px;
+    margin-left:270px;
+
+    padding:35px;
+
 }
 
-/*
-Área temporária.
-Depois será substituída pelo dashboard.
-*/
-.welcome-area {
-max-width: 900px;
+
+
+
+
+
+/* ==========================================================================
+   HEADER
+========================================================================== */
+
+
+.dashboard-header {
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:35px;
+
 }
 
-.welcome-area h2 {
-font-size: 38px;
 
-margin-bottom: 12px;
+
+.page-label {
+
+    font-size:12px;
+
+    color:
+        #00b7ff;
+
+    letter-spacing:2px;
+
 }
 
-.welcome-area p {
-font-size: 18px;
 
-color: var(--color-text-secondary);
+
+.dashboard-header h2 {
+
+    margin-top:8px;
+
+    font-size:32px;
+
 }
 
-/* ==================================================
-8. RESPONSIVIDADE
-================================================== */
 
-/*
-Ajustes para telas menores.
-*/
-@media (max-width: 800px) {
 
-/* Diminui a largura da barra */
+.dashboard-header p {
+
+    margin-top:10px;
+
+    color:
+        #9db0c7;
+
+}
+
+
+
+
+
+
+.sos-button {
+
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff3b3b,
+            #ff7b00
+        );
+
+
+    border:none;
+
+    color:white;
+
+    padding:
+        14px 22px;
+
+    border-radius:12px;
+
+    cursor:pointer;
+
+    font-weight:bold;
+
+    font-size:15px;
+
+}
+
+
+
+
+
+
+
+/* ==========================================================================
+   CARDS
+========================================================================== */
+
+
+.dashboard-grid {
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(
+            3,
+            1fr
+        );
+
+    gap:20px;
+
+    margin-bottom:30px;
+
+}
+
+
+
+
+.data-card {
+
+
+    background:
+        rgba(
+            18,
+            36,
+            60,
+            0.9
+        );
+
+
+    border:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            0.08
+        );
+
+
+    border-radius:18px;
+
+
+    padding:22px;
+
+
+    display:flex;
+
+
+    align-items:center;
+
+
+    gap:18px;
+
+
+    box-shadow:
+        0 15px 35px
+        rgba(
+            0,
+            0,
+            0,
+            0.25
+        );
+
+}
+
+
+
+.card-icon {
+
+    font-size:35px;
+
+}
+
+
+
+.data-card p {
+
+    color:
+        #9db0c7;
+
+    font-size:14px;
+
+}
+
+
+
+.data-card strong {
+
+
+    display:block;
+
+
+    margin-top:6px;
+
+
+    font-size:32px;
+
+
+    color:white;
+
+
+}
+
+
+
+.data-card small {
+
+    color:
+        #6f87a5;
+
+}
+
+
+
+.data-card.alert {
+
+    border-color:
+        rgba(
+            255,
+            193,
+            7,
+            0.4
+        );
+
+}
+
+
+
+.data-card.danger {
+
+    border-color:
+        rgba(
+            255,
+            60,
+            60,
+            0.4
+        );
+
+}
+
+
+
+.data-card.offline {
+
+    border-color:
+        rgba(
+            150,
+            150,
+            150,
+            0.25
+        );
+
+}
+
+
+
+
+
+
+/* ==========================================================================
+   PAINÉIS
+========================================================================== */
+
+
+.dashboard-panels {
+
+
+    display:grid;
+
+
+    grid-template-columns:
+        2fr 1fr;
+
+
+    gap:25px;
+
+
+}
+
+
+
+
+
+.panel {
+
+
+    background:
+        rgba(
+            13,
+            28,
+            48,
+            0.95
+        );
+
+
+    border-radius:18px;
+
+
+    border:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            0.08
+        );
+
+
+    padding:22px;
+
+
+}
+
+
+
+
+
+.panel-header {
+
+
+    display:flex;
+
+
+    justify-content:space-between;
+
+
+    align-items:center;
+
+
+    margin-bottom:20px;
+
+
+}
+
+
+
+.panel-header h3 {
+
+
+    font-size:18px;
+
+
+}
+
+
+
+.panel-header a {
+
+
+    color:
+        #00b7ff;
+
+
+    font-size:14px;
+
+
+}
+
+
+
+
+
+
+/* ==========================================================================
+   MAPA
+========================================================================== */
+
+
+#sensor-map {
+
+
+    height:420px;
+
+
+    border-radius:15px;
+
+
+    background:
+
+
+        linear-gradient(
+            135deg,
+            #0b223b,
+            #07111f
+        );
+
+
+    display:flex;
+
+
+    justify-content:center;
+
+
+    align-items:center;
+
+
+}
+
+
+
+.map-placeholder {
+
+
+    text-align:center;
+
+
+    color:
+        #8fa9c7;
+
+
+    font-size:18px;
+
+
+}
+
+
+
+.map-placeholder:first-letter {
+
+
+    font-size:45px;
+
+
+}
+
+
+
+
+
+
+
+/* ==========================================================================
+   CRITICAL LIST
+========================================================================== */
+
+
+#critical-list {
+
+
+    display:flex;
+
+
+    flex-direction:column;
+
+
+    gap:12px;
+
+
+}
+
+
+
+.critical-item {
+
+
+    background:
+        rgba(
+            255,
+            70,
+            70,
+            0.12
+        );
+
+
+    border-left:
+        4px solid
+        #ff4545;
+
+
+    padding:15px;
+
+
+    border-radius:10px;
+
+
+    display:flex;
+
+
+    justify-content:space-between;
+
+
+}
+
+
+
+
+
+
+
+/* ==========================================================================
+   GIS SUMMARY
+========================================================================== */
+
+
+.gis-summary {
+
+
+    margin-top:25px;
+
+
+}
+
+
+
+.gis-content {
+
+
+    display:grid;
+
+
+    grid-template-columns:
+        repeat(
+            3,
+            1fr
+        );
+
+
+    gap:20px;
+
+
+}
+
+
+
+.gis-content div {
+
+
+    background:
+        rgba(
+            0,
+            174,
+            255,
+            0.08
+        );
+
+
+    padding:20px;
+
+
+    border-radius:14px;
+
+
+}
+
+
+
+.gis-content strong {
+
+
+    color:
+        #00b7ff;
+
+
+}
+
+
+
+.gis-content p {
+
+
+    margin-top:8px;
+
+
+    color:
+        #c8d6e8;
+
+
+}
+
+
+
+
+
+
+/* ==========================================================================
+   RESPONSIVO
+========================================================================== */
+
+
+@media(max-width:1100px){
+
+
 .sidebar {
-width: 80px;
 
-padding: 25px 12px;
+    width:80px;
+
+    padding:15px;
 
 }
 
-/* Oculta textos e mantém os ícones */
+
+
 .brand-text,
-.nav-item span:last-child,
-.sidebar-footer {
-display: none;
-}
+.nav-item:not(.active)::after,
+.sidebar-footer p {
 
-/* Centraliza os ícones */
-.brand {
-justify-content: center;
-}
-
-.nav-item {
-justify-content: center;
-
-padding: 15px;
+    display:none;
 
 }
 
-/* Ajusta a área principal */
+
+
 .main-content {
-margin-left: 80px;
 
-padding: 30px 20px;
+    margin-left:80px;
+
+}
+
+
+
+.dashboard-grid {
+
+
+    grid-template-columns:
+        repeat(
+            2,
+            1fr
+        );
 
 
 }
+
+
+
+.dashboard-panels {
+
+
+    grid-template-columns:1fr;
+
+
+}
+
+
+
+}
+
+
+
+
+@media(max-width:700px){
+
+
+.main-content {
+
+
+    padding:20px;
+
+
+}
+
+
+
+.dashboard-header {
+
+
+    flex-direction:column;
+
+
+    align-items:flex-start;
+
+
+    gap:20px;
+
+
+}
+
+
+
+.dashboard-grid {
+
+
+    grid-template-columns:1fr;
+
+
+}
+
+
+
+.gis-content {
+
+
+    grid-template-columns:1fr;
+
+
+}
+
 
 }
