@@ -18,3 +18,18 @@ dist/
 .env
 
 gis/output_rasters/dem_source.tif
+
+# Ambiente virtual Python
+.venv/
+
+# Arquivos temporários do Python
+__pycache__/
+*.pyc
+
+# Dados e rasters GIS grandes
+gis/outputs_dem/
+gis/outputs_hand/*.tif
+
+# Arquivos temporários do processamento GIS
+gis/temp/
+gis/cache/
