@@ -1,0 +1,16 @@
+{
+    "metadata": {
+        "source": "Americas TechGuard GIS",
+        "model": "HAND",
+        "region": "Blumenau/SC"
+    },
+
+    "risk_maps": [
+        {
+            "id": "hand_blumenau",
+            "name": "Mapa de Suscetibilidade HAND - Blumenau",
+            "type": "inundacao",
+            "file": "gis/output_maps/mapa_suscetibilidade_hand_blumenau.html"
+        }
+    ]
+}
