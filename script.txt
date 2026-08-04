@@ -1,0 +1,714 @@
+primeiro tenho que pegar o codigo do simular e fazer gerar somente o telemetry e stations .json e enviar pra pasta data:import os
+import csv
+import json
+import time
+import uuid
+import folium
+from datetime import datetime, timezone
+
+# Configurações globais do dispositivo & ambiente (Foco: Blumenau - SC)
+DEVICE_ID = "NODE_BLUMENAU_001"
+# Centro aproximado de Blumenau
+LATITUDE = -26.9194
+LONGITUDE = -49.0661
+SCHEMA_VERSION = "1.0.0"
+FIRMWARE_VERSION = "1.2.4"
+
+# Organização de diretórios
+OUTPUT_DIR = "outputs"
+JSON_DIR = os.path.join(OUTPUT_DIR, "json")
+CSV_DIR = os.path.join(OUTPUT_DIR, "csv")
+MAP_DIR = os.path.join(OUTPUT_DIR, "maps")
+REPORT_DIR = os.path.join(OUTPUT_DIR, "reports")
+
+os.makedirs(JSON_DIR, exist_ok=True)
+os.makedirs(CSV_DIR, exist_ok=True)
+os.makedirs(MAP_DIR, exist_ok=True)
+os.makedirs(REPORT_DIR, exist_ok=True)
+
+simulation_results = []
+
+# 1. Hardware layer (Simulação dos sensores)
+# Simula a leitura física dos sensores ambientais e acompanha a progressão de uma tempestade real ao longo dos ciclos.
+
+def read_simulated_sensors(cycle_num):
+
+    # Mapeamento do cenário para construir a narrativa lógica do desastre
+    scenarios = {
+        1: {"water_level": 0.6, "rain": 0.0, "temperature": 24.5, "humidity": 65, "battery": 100},
+        2: {"water_level": 1.4, "rain": 12.5, "temperature": 22.1, "humidity": 80, "battery": 98},
+        3: {"water_level": 2.2, "rain": 34.0, "temperature": 20.3, "humidity": 92, "battery": 96},
+        4: {"water_level": 3.2, "rain": 52.8, "temperature": 19.0, "humidity": 98, "battery": 95},
+        5: {"water_level": 3.5, "rain": 55.0, "temperature": 18.5, "humidity": 98, "battery": 94},
+        6: {"water_level": 3.6, "rain": 55.0, "temperature": 18.2, "humidity": 98, "battery": 92}
+    }
+    return scenarios.get(cycle_num, scenarios[1])
+
+# 2. Edge computing (Lógica Local)
+# Motor de classificação de risco executado na borda (Edge Node).
+
+class RiskEngine:
+
+    @staticmethod
+    def classify(water_level):
+        if water_level < 1.0:
+            return "Seguro", "Nível da água dentro da normalidade."
+        elif water_level < 2.0:
+            return "Atenção", "Elevação gradual do nível da água."
+        elif water_level < 3.0:
+            return "Alerta", "Possibilidade de transbordamento."
+        return "Crítico", "Risco iminente de inundação."
+
+# 3. Gerenciador de comunicação (Failover Ativo)
+# Gerencia a conectividade do dispositivo de borda e Prioriza LoRaWAN e chaveia para o Meshtastic após falhas consecutivas do Gateway.
+
+class CommunicationManager:
+    
+    def __init__(self):
+        self.failures = 0
+
+    def select_network(self, gateway_available):
+        # Prioriza LoRaWAN e chaveia para Meshtastic após falhas consecutivas do Gateway.
+        
+        if gateway_available:
+            self.failures = 0
+            return "LoRaWAN"
+
+        self.failures += 1
+
+        # Mecanismo de Debounce: Chaveia para Mesh apenas no segundo ciclo de falhas
+        if self.failures >= 2:
+            return "Meshtastic"
+
+        return "LoRaWAN"
+
+# 4. Otimização de Telemetria para Rádio (LPWAN)
+# Compacta o JSON completo para transmissão em redes de baixo consumo e banda reduzida.
+
+class TelemetryMinimizer:
+    
+    RISK_CODES = {
+        "Seguro": "SG",
+        "Atenção": "AT",
+        "Alerta": "AL",
+        "Crítico": "CR"
+    }
+
+    @staticmethod
+    def compress(payload):
+        # Compacta o JSON completo reduzindo drasticamente o consumo de banda de rádio.
+        dt_str = payload["timestamp"].replace("Z", "+00:00")
+        epoch_time = int(datetime.fromisoformat(dt_str).timestamp())
+
+        return {
+            "id": payload["device_id"],
+            "ts": epoch_time,
+            "wl": payload["sensor_value"],
+            "rn": payload["rain_mm"],
+            "tp": payload["temperature_c"],
+            "hm": payload["humidity_pct"],
+            "bt": payload["battery_percent"],
+            "rk": TelemetryMinimizer.RISK_CODES[payload["risk_level"]],
+            "nt": "LW" if payload["network_mode"] == "LoRaWAN" else "MT"
+        }
+
+# 5. Construtor de payloads
+# Consolida as leituras e gera o payload original enriquecido.
+# Configura o cenário de rede correspondente a cada fase do desastre.
+
+def build_payload(cycle_num, sensor_data, comm_manager):
+    start = time.perf_counter()
+    message_id = str(uuid.uuid4())
+
+    # Orquestração determinística do estado da rede por ciclo
+    if cycle_num <= 4:
+        gateway_available = True
+        rssi_steps = {1: -75, 2: -85, 3: -105, 4: -115}
+        rssi = rssi_steps[cycle_num]
+        snr = round(10.0 - (cycle_num * 3), 1)
+    else:
+        gateway_available = False
+        rssi = -120
+        snr = -12.0
+
+    risk, message = RiskEngine.classify(sensor_data["water_level"])
+    network = comm_manager.select_network(gateway_available)
+    mesh_hops = 2 if network == "Meshtastic" else 0
+    timestamp_utc = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+
+    # Múltiplos sensores simulados no mesmo mapa aplicando pequenos desvios geográficos baseados no ciclo
+    # (Para fins de visualização de múltiplos nós em Blumenau)
+    lat_offset = (cycle_num - 1) * 0.0008
+    lon_offset = (cycle_num - 1) * 0.0006
+
+    payload = {
+        "schema_version": SCHEMA_VERSION,
+        "firmware_version": FIRMWARE_VERSION,
+        "simulation": True,
+        "message_id": message_id,
+        "device_id": f"NODE_BLUMENAU_{cycle_num:03d}",
+        "timestamp": timestamp_utc,
+        "latitude": LATITUDE + lat_offset,
+        "longitude": LONGITUDE + lon_offset,
+        "sensor_type": "ultrasonic_level",
+        "sensor_value": sensor_data["water_level"],
+        "unit": "m",
+        "rain_mm": sensor_data["rain"],
+        "temperature_c": sensor_data["temperature"],
+        "humidity_pct": sensor_data["humidity"],
+        "risk_level": risk,
+        "alert_message": message,
+        "source": network,
+        "network_mode": network,
+        "gateway_available": gateway_available,
+        "mesh_hops": mesh_hops,
+        "battery_percent": sensor_data["battery"],
+        "signal_rssi": rssi,
+        "signal_snr": snr
+    }
+
+    payload["processing_time_ms"] = round((time.perf_counter() - start) * 1000, 3)
+    return payload
+
+# 6. Validação de contrato (Edge Security)
+# Garante que nenhum dado essencial esteja ausente ou nulo.
+
+def validate(payload):
+    required = [
+        "device_id", "timestamp", "latitude", "longitude", "sensor_type",
+        "sensor_value", "unit", "risk_level", "alert_message", "source"
+    ]
+    for field in required:
+        if field not in payload or payload[field] is None:
+            raise ValueError(f"Contrato violado! Campo obrigatório ausente: '{field}'")
+
+# 7. Exposição / Publicação (MQTT Simulator)
+# Simula a postagem em Broker MQTT com tópicos específicos e exibe métricas.
+
+def publish(payload):
+    if payload["network_mode"] == "LoRaWAN":
+        topic = f"americas-techguard/lorawan/{payload['device_id']}/telemetry"
+    else:
+        topic = f"americas-techguard/meshtastic/{payload['device_id']}/alerts"
+
+    compact = TelemetryMinimizer.compress(payload)
+    original_size = len(json.dumps(payload).encode("utf-8"))
+    compact_size = len(json.dumps(compact).encode("utf-8"))
+    reduction = 100 * (1 - compact_size / original_size)
+
+    print(f"Device............... {payload['device_id']} (Firmware: {payload['firmware_version']})")
+    print(f"Gateway Status....... {'ONLINE' if payload['gateway_available'] else 'OFFLINE (Falha de Comunicação)'}")
+    print(f"Network Selection.... {payload['network_mode']}")
+    print(f"Mesh Hops............ {payload['mesh_hops']}")
+    print(f"Signal Integrity..... RSSI: {payload['signal_rssi']} dBm | SNR: {payload['signal_snr']} dB")
+    print(f"Local Risk Engine.... {payload['risk_level']} -> {payload['alert_message']}")
+    print(f"MQTT Target Topic.... {topic}")
+    print(f"Edge Processing...... {payload['processing_time_ms']} ms")
+    print(f"Payload Original..... {original_size} bytes")
+    print(f"Payload Compactado... {compact_size} bytes (Redução de {reduction:.1f}%)")
+    print("\n[DEBUG] JSON COMPACTADO ENVIADO VIA RÁDIO:")
+    print(json.dumps(compact, indent=4, ensure_ascii=False))
+
+# Funções de exportação modulares
+
+def export_json(results, timestamp):
+    # Payload completo
+    full_path = os.path.join(JSON_DIR, f"simulation_{timestamp}.json")
+    with open(full_path, "w", encoding="utf-8") as f:
+        json.dump(results, f, indent=4, ensure_ascii=False)
+        
+    # Payload compactado (LPWAN)
+    compact_results = [TelemetryMinimizer.compress(p) for p in results]
+    compact_path = os.path.join(JSON_DIR, f"simulation_compact_{timestamp}.json")
+    with open(compact_path, "w", encoding="utf-8") as f:
+        json.dump(compact_results, f, indent=4, ensure_ascii=False)
+        
+    print(f"  [OK] JSONs exportados:")
+    print(f"       -> {full_path}")
+    print(f"       -> {compact_path}")
+
+def export_csv(results, timestamp):
+    csv_path = os.path.join(CSV_DIR, f"simulation_{timestamp}.csv")
+    with open(csv_path, "w", newline="", encoding="utf-8") as csvfile:
+        writer = csv.DictWriter(csvfile, fieldnames=results[0].keys())
+        writer.writeheader()
+        writer.writerows(results)
+    print(f"  [OK] CSV exportado: {csv_path}")
+
+def export_map(results, timestamp):
+    mapa = folium.Map(location=[LATITUDE, LONGITUDE], zoom_start=14)
+    cores = {
+        "Seguro": "green",
+        "Atenção": "orange",
+        "Alerta": "red",
+        "Crítico": "darkred"
+    }
+
+    for res in results:
+        popup_content = f"""
+        <div style="font-family: Arial; font-size: 12px; min-width: 180px;">
+            <b>Node:</b> {res['device_id']}<br><br>
+            <b>Water Level:</b> {res['sensor_value']} {res['unit']}<br>
+            <b>Rain:</b> {res['rain_mm']} mm<br>
+            <b>Temperature:</b> {res['temperature_c']}°C<br>
+            <b>Humidity:</b> {res['humidity_pct']}%<br><br>
+            <b>Risk:</b> <span style="color: {cores.get(res['risk_level'], 'blue')}"><b>{res['risk_level']}</b></span><br>
+            <b>Network:</b> {res['network_mode']}<br>
+            <b>RSSI:</b> {res['signal_rssi']} dBm<br>
+            <b>Battery:</b> {res['battery_percent']}%
+        </div>
+        """
+        folium.CircleMarker(
+            location=[res["latitude"], res["longitude"]],
+            radius=12,
+            color=cores.get(res["risk_level"], "blue"),
+            fill=True,
+            fill_color=cores.get(res["risk_level"], "blue"),
+            fill_opacity=0.7,
+            popup=folium.Popup(popup_content, max_width=250)
+        ).add_to(mapa)
+
+    map_path = os.path.join(MAP_DIR, f"map_{timestamp}.html")
+    mapa.save(map_path)
+    print(f"  [OK] Mapa HTML exportado: {map_path}")
+
+def export_statistics(results, timestamp):
+    total_cycles = len(results)
+    water_levels = [r["sensor_value"] for r in results]
+    rains = [r["rain_mm"] for r in results]
+    lorawan_count = sum(1 for r in results if r["network_mode"] == "LoRaWAN")
+    meshtastic_count = total_cycles - lorawan_count
+    
+    avg_processing = sum(r["processing_time_ms"] for r in results) / total_cycles
+    
+    original_size = sum(len(json.dumps(r).encode("utf-8")) for r in results)
+    compact_size = sum(len(json.dumps(TelemetryMinimizer.compress(r)).encode("utf-8")) for r in results)
+    reduction = 100 * (1 - compact_size / original_size)
+
+    report_lines = [
+        "\n============================================================",
+        "                 ESTATISTICAS DA SIMULACAO",
+        "============================================================\n",
+        f"Ciclos executados.......: {total_cycles}",
+        f"Maior nivel.............: {max(water_levels):.1f} m",
+        f"Menor nivel.............: {min(water_levels):.1f} m",
+        f"Nivel medio.............: {sum(water_levels)/total_cycles:.2f} m",
+        f"Maior chuva.............: {max(rains):.1f} mm",
+        f"LoRaWAN.................: {lorawan_count}",
+        f"Meshtastic..............: {meshtastic_count}",
+        f"Tempo medio Edge........: {avg_processing:.3f} ms",
+        f"Payload medio...........: {int(original_size/total_cycles)} bytes",
+        f"Compactado..............: {int(compact_size/total_cycles)} bytes",
+        f"Reducao media...........: {reduction:.1f}%",
+    ]
+    
+    # Imprime no console
+    print("\n" + "\n".join(report_lines) + "\n")
+    
+    # Salva em arquivo
+    report_path = os.path.join(REPORT_DIR, f"statistics_{timestamp}.txt")
+    with open(report_path, "w", encoding="utf-8") as f:
+        f.write("\n".join(report_lines))
+    print(f"  [OK] Relatorio estatistico salvo: {report_path}")
+
+# Fluxo principal de execução
+
+if __name__ == "__main__":
+    manager = CommunicationManager()
+
+    print("\n" + "=" * 70)
+    print("            AMERICAS TECHGUARD - SIMULADOR HÍBRIDO IoT            ")
+    print("=" * 70)
+
+    # 1. Execução dos Ciclos de Simulação
+    for cycle in range(1, 7):
+        print("\n" + "-" * 70)
+        print(f"                             CICLO {cycle}                             ")
+        print("-" * 70)
+
+        sensor_data = read_simulated_sensors(cycle)
+        payload = build_payload(cycle, sensor_data, manager)
+        validate(payload)
+        publish(payload)
+        
+        # Armazena o resultado para posterior exportação
+        simulation_results.append(payload)
+        time.sleep(1)
+
+    print("\n" + "-" * 70)
+    print("Simulação finalizada com sucesso. Iniciando exportação modular...\n")
+
+    # 2. Executa as exportações de arquivos
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    
+    export_json(simulation_results, timestamp)
+    export_csv(simulation_results, timestamp)
+    export_map(simulation_results, timestamp)
+    export_statistics(simulation_results, timestamp)
+    
+    print("\n" + "=" * 70)
+    print("            AMERICAS TECHGUARD - PROCESSAMENTO CONCLUÍDO          ")
+    print("=" * 70 + "\n") 
+
+o que tem que ter em cada pasta do telemetry e json também:
+telemetry:{
+  "metadata": {
+    "simulation": true,
+    "municipality": "Blumenau",
+    "updated_at": "2026-08-04T14:00:00-03:00",
+    "unit_system": "metric",
+    "description": "Leituras ambientais simuladas recebidas pelos nós da plataforma."
+  },
+
+  "telemetry": [
+    {
+      "station_id": "ATG_BLU_001",
+      "timestamp": "2026-08-04T14:00:00-03:00",
+
+      "measurements": {
+        "water_level_m": 2.15,
+        "rainfall_mm": 8.4,
+        "temperature_c": 21.8,
+        "humidity_percent": 82
+      },
+
+      "communication": {
+        "channel_used": "LoRaWAN",
+        "delivery_status": "delivered"
+      }
+    },
+
+    {
+      "station_id": "ATG_BLU_002",
+      "timestamp": "2026-08-04T14:00:00-03:00",
+
+      "measurements": {
+        "water_level_m": 3.42,
+        "rainfall_mm": 31.6,
+        "temperature_c": 20.9,
+        "humidity_percent": 91
+      },
+
+      "communication": {
+        "channel_used": "LoRaWAN",
+        "delivery_status": "delivered"
+      }
+    },
+
+    {
+      "station_id": "ATG_BLU_003",
+      "timestamp": "2026-08-04T14:00:00-03:00",
+
+      "measurements": {
+        "water_level_m": 4.18,
+        "rainfall_mm": 47.8,
+        "temperature_c": 20.3,
+        "humidity_percent": 95
+      },
+
+      "communication": {
+        "channel_used": "Mesh",
+        "delivery_status": "delivered",
+        "fallback_reason": "LoRaWAN unavailable"
+      }
+    },
+
+    {
+      "station_id": "ATG_BLU_004",
+      "timestamp": "2026-08-04T14:00:00-03:00",
+
+      "measurements": {
+        "water_level_m": 2.84,
+        "rainfall_mm": 19.2,
+        "temperature_c": 21.1,
+        "humidity_percent": 87
+      },
+
+      "communication": {
+        "channel_used": "LoRaWAN",
+        "delivery_status": "delivered"
+      }
+    },
+
+    {
+      "station_id": "ATG_BLU_005",
+      "timestamp": "2026-08-04T14:00:00-03:00",
+
+      "measurements": {
+        "rainfall_mm": 12.5,
+        "temperature_c": 20.6,
+        "humidity_percent": 89
+      },
+
+      "communication": {
+        "channel_used": "LoRaWAN",
+        "delivery_status": "delivered"
+      }
+    },
+
+    {
+      "station_id": "ATG_BLU_006",
+      "timestamp": "2026-08-04T14:00:00-03:00",
+
+      "measurements": {
+        "water_level_m": 3.05,
+        "rainfall_mm": 27.4,
+        "temperature_c": 21.0,
+        "humidity_percent": 90
+      },
+
+      "communication": {
+        "channel_used": "LoRaWAN",
+        "delivery_status": "delivered"
+      }
+    },
+
+    {
+      "station_id": "ATG_BLU_007",
+      "timestamp": "2026-08-04T14:00:00-03:00",
+
+      "measurements": {
+        "rainfall_mm": 38.1,
+        "temperature_c": 20.2,
+        "humidity_percent": 94
+      },
+
+      "communication": {
+        "channel_used": "Mesh",
+        "delivery_status": "delivered",
+        "fallback_reason": "LoRaWAN unavailable"
+      }
+    },
+
+    {
+      "station_id": "ATG_BLU_008",
+      "timestamp": "2026-08-04T14:00:00-03:00",
+
+      "measurements": {
+        "water_level_m": 2.47,
+        "rainfall_mm": 15.8,
+        "temperature_c": 21.4,
+        "humidity_percent": 85
+      },
+
+      "communication": {
+        "channel_used": "LoRaWAN",
+        "delivery_status": "delivered"
+      }
+    }
+  ]
+}
+
+
+stations: 
+
+{
+  "metadata": {
+    "project": "Americas TechGuard",
+    "municipality": "Blumenau",
+    "state": "SC",
+    "country": "Brazil",
+    "simulation": true,
+    "communication_architecture": "Hybrid",
+    "primary_communication": "LoRaWAN",
+    "fallback_communication": "Mesh",
+    "description": "Topologia simulada de nós ambientais preparada para futura integração com hardware próprio."
+  },
+
+  "stations": [
+    {
+      "id": "ATG_BLU_001",
+      "name": "Nó Centro",
+      "region": "Centro",
+      "latitude": -26.9188,
+      "longitude": -49.0662,
+
+      "sensors": [
+        "water_level",
+        "rainfall",
+        "temperature",
+        "humidity"
+      ],
+
+      "communication": {
+        "primary": "LoRaWAN",
+        "fallback": "Mesh",
+        "current_channel": "LoRaWAN",
+        "lorawan_available": true,
+        "mesh_available": true
+      },
+
+      "status": "online"
+    },
+
+    {
+      "id": "ATG_BLU_002",
+      "name": "Nó Garcia",
+      "region": "Garcia",
+      "latitude": -26.9502,
+      "longitude": -49.0815,
+
+      "sensors": [
+        "water_level",
+        "rainfall",
+        "temperature"
+      ],
+
+      "communication": {
+        "primary": "LoRaWAN",
+        "fallback": "Mesh",
+        "current_channel": "LoRaWAN",
+        "lorawan_available": true,
+        "mesh_available": true
+      },
+
+      "status": "online"
+    },
+
+    {
+      "id": "ATG_BLU_003",
+      "name": "Nó Itoupava Norte",
+      "region": "Itoupava Norte",
+      "latitude": -26.8948,
+      "longitude": -49.0668,
+
+      "sensors": [
+        "water_level",
+        "rainfall",
+        "temperature",
+        "humidity"
+      ],
+
+      "communication": {
+        "primary": "LoRaWAN",
+        "fallback": "Mesh",
+        "current_channel": "Mesh",
+        "lorawan_available": false,
+        "mesh_available": true
+      },
+
+      "status": "online"
+    },
+
+    {
+      "id": "ATG_BLU_004",
+      "name": "Nó Itoupava Central",
+      "region": "Itoupava Central",
+      "latitude": -26.8706,
+      "longitude": -49.0894,
+
+      "sensors": [
+        "water_level",
+        "rainfall",
+        "temperature"
+      ],
+
+      "communication": {
+        "primary": "LoRaWAN",
+        "fallback": "Mesh",
+        "current_channel": "LoRaWAN",
+        "lorawan_available": true,
+        "mesh_available": true
+      },
+
+      "status": "online"
+    },
+
+    {
+      "id": "ATG_BLU_005",
+      "name": "Nó Vila Itoupava",
+      "region": "Vila Itoupava",
+      "latitude": -26.8165,
+      "longitude": -49.1128,
+
+      "sensors": [
+        "rainfall",
+        "temperature",
+        "humidity"
+      ],
+
+      "communication": {
+        "primary": "LoRaWAN",
+        "fallback": "Mesh",
+        "current_channel": "LoRaWAN",
+        "lorawan_available": true,
+        "mesh_available": true
+      },
+
+      "status": "online"
+    },
+
+    {
+      "id": "ATG_BLU_006",
+      "name": "Nó Velha",
+      "region": "Velha",
+      "latitude": -26.9336,
+      "longitude": -49.0907,
+
+      "sensors": [
+        "water_level",
+        "rainfall",
+        "temperature",
+        "humidity"
+      ],
+
+      "communication": {
+        "primary": "LoRaWAN",
+        "fallback": "Mesh",
+        "current_channel": "LoRaWAN",
+        "lorawan_available": true,
+        "mesh_available": true
+      },
+
+      "status": "online"
+    },
+
+    {
+      "id": "ATG_BLU_007",
+      "name": "Nó Fortaleza",
+      "region": "Fortaleza",
+      "latitude": -26.8809,
+      "longitude": -49.0745,
+
+      "sensors": [
+        "rainfall",
+        "temperature",
+        "humidity"
+      ],
+
+      "communication": {
+        "primary": "LoRaWAN",
+        "fallback": "Mesh",
+        "current_channel": "Mesh",
+        "lorawan_available": false,
+        "mesh_available": true
+      },
+
+      "status": "online"
+    },
+
+    {
+      "id": "ATG_BLU_008",
+      "name": "Nó Badenfurt",
+      "region": "Badenfurt",
+      "latitude": -26.8735,
+      "longitude": -49.1318,
+
+      "sensors": [
+        "water_level",
+        "rainfall",
+        "temperature"
+      ],
+
+      "communication": {
+        "primary": "LoRaWAN",
+        "fallback": "Mesh",
+        "current_channel": "LoRaWAN",
+        "lorawan_available": true,
+        "mesh_available": true
+      },
+
+      "status": "online"
+    }
+  ]
+}
