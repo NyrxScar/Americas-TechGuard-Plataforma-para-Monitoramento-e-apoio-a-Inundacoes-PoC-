@@ -28,8 +28,11 @@ __pycache__/
 
 # Dados e rasters GIS grandes
 gis/outputs_dem/
-gis/outputs_hand/*.tif
+gis/outputs_hand/
 
 # Arquivos temporários do processamento GIS
 gis/temp/
 gis/cache/
+# GIS generated outputs
+gis/output_maps/
+
