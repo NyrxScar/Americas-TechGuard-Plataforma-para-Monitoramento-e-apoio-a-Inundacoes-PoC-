@@ -1,0 +1,90 @@
+{
+  "metadata": {
+    "simulation": true,
+    "municipality": "Blumenau",
+    "updated_at": "2026-08-04T14:00:00-03:00",
+    "description": "Dados simulados de abrigos utilizados na demonstração da plataforma."
+  },
+
+  "shelters": [
+    {
+      "id": "ABR_BLU_001",
+      "name": "Abrigo Municipal Centro",
+      "region": "Centro",
+      "address": "Região Central, Blumenau - SC",
+
+      "location": {
+        "latitude": -26.9192,
+        "longitude": -49.0671
+      },
+
+      "capacity": 180,
+      "occupied": 126,
+      "available": 54,
+      "status": "available",
+
+      "accessibility": true,
+      "accepts_pets": false
+    },
+
+    {
+      "id": "ABR_BLU_002",
+      "name": "Abrigo Comunitário Garcia",
+      "region": "Garcia",
+      "address": "Região do Garcia, Blumenau - SC",
+
+      "location": {
+        "latitude": -26.9494,
+        "longitude": -49.0812
+      },
+
+      "capacity": 120,
+      "occupied": 120,
+      "available": 0,
+      "status": "full",
+
+      "accessibility": true,
+      "accepts_pets": false
+    },
+
+    {
+      "id": "ABR_BLU_003",
+      "name": "Abrigo Itoupava Norte",
+      "region": "Itoupava Norte",
+      "address": "Região da Itoupava Norte, Blumenau - SC",
+
+      "location": {
+        "latitude": -26.8942,
+        "longitude": -49.0674
+      },
+
+      "capacity": 200,
+      "occupied": 84,
+      "available": 116,
+      "status": "available",
+
+      "accessibility": true,
+      "accepts_pets": true
+    },
+
+    {
+      "id": "ABR_BLU_004",
+      "name": "Abrigo Velha",
+      "region": "Velha",
+      "address": "Região da Velha, Blumenau - SC",
+
+      "location": {
+        "latitude": -26.9328,
+        "longitude": -49.0901
+      },
+
+      "capacity": 150,
+      "occupied": 142,
+      "available": 8,
+      "status": "limited",
+
+      "accessibility": false,
+      "accepts_pets": false
+    }
+  ]
+}

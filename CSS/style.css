@@ -1,0 +1,323 @@
+/* ==================================================
+AMERICAS TECHGUARD
+ESTILOS GERAIS DA APLICAÇÃO
+================================================== */
+
+/* ==================================================
+
+1. PALETA DE CORES
+   ================================================== */
+
+:root {
+/* Azul mais escuro: fundo principal */
+--color-background: #12184F;
+
+/* Azul escuro: barra lateral */
+--color-sidebar: #1C2578;
+
+/* Azul médio: elementos secundários */
+--color-secondary: #2531A1;
+
+/* Azul forte: efeitos de interação */
+--color-hover: #2E3EC9;
+
+/* Azul principal: item ativo e destaques */
+--color-primary: #3647ED;
+
+/* Cores dos textos */
+--color-white: #FFFFFF;
+--color-text-secondary: #BFC5FF;
+}
+
+/* ==================================================
+2. CONFIGURAÇÕES GERAIS
+================================================== */
+
+/*
+Remove margens e espaçamentos padrões
+aplicados pelo navegador.
+*/
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  }
+
+/*
+Define o comportamento geral do corpo da página.
+*/
+body {
+/* Fonte temporária */
+font-family: Arial, sans-serif;
+
+/* Cor de fundo geral */
+background-color: var(--color-background);
+
+/* Cor padrão dos textos */
+color: var(--color-white);
+
+/* Impede barras de rolagem horizontais */
+overflow-x: hidden;
+}
+
+/* ==================================================
+3. BARRA LATERAL
+================================================== */
+
+/*
+Barra fixa no lado esquerdo.
+*/
+.sidebar {
+/* Mantém a barra visível durante a rolagem */
+position: fixed;
+
+/* Posicionamento */
+top: 0;
+left: 0;
+
+/* Ocupa toda a altura da tela */
+width: 260px;
+height: 100vh;
+
+/* Cor da barra lateral */
+background-color: var(--color-sidebar);
+
+/* Organiza logo, menu e rodapé verticalmente */
+display: flex;
+flex-direction: column;
+
+/* Espaçamento interno */
+padding: 28px 18px;
+
+/* Separação visual da área principal */
+border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ==================================================
+4. IDENTIDADE DO PROJETO
+================================================== */
+
+.brand {
+/* Coloca o ícone e o nome lado a lado */
+display: flex;
+align-items: center;
+
+/* Espaço entre o ícone e o texto */
+gap: 12px;
+
+/* Espaço abaixo da marca */
+margin-bottom: 45px;
+}
+
+/*
+Logotipo temporário.
+Depois podemos trocar por uma imagem.
+*/
+.brand-icon {
+width: 48px;
+height: 48px;
+
+/* Centraliza as letras */
+display: flex;
+align-items: center;
+justify-content: center;
+
+/* Cor de destaque */
+background-color: var(--color-primary);
+
+/* Formato arredondado */
+border-radius: 14px;
+
+/* Texto */
+color: var(--color-white);
+font-weight: bold;
+}
+
+/* Nome principal */
+.brand-text h1 {
+font-size: 18px;
+font-weight: 700;
+}
+
+/* Subtítulo TECHGUARD */
+.brand-text span {
+font-size: 11px;
+letter-spacing: 2px;
+
+color: var(--color-text-secondary);
+}
+
+/* ==================================================
+5. MENU DE NAVEGAÇÃO
+================================================== */
+
+.navigation {
+/* Faz o menu ocupar o espaço disponível */
+flex: 1;
+
+/* Organiza os links verticalmente */
+display: flex;
+flex-direction: column;
+
+/* Espaçamento entre os itens */
+gap: 8px;
+}
+
+/*
+Item padrão do menu.
+*/
+.nav-item {
+/* Ícone e texto ficam lado a lado */
+display: flex;
+align-items: center;
+
+/* Espaçamento entre ícone e texto */
+gap: 14px;
+
+/* Espaçamento interno */
+padding: 14px 16px;
+
+/* Remove o sublinhado dos links */
+text-decoration: none;
+
+/* Cor padrão */
+color: var(--color-text-secondary);
+
+/* Bordas arredondadas */
+border-radius: 12px;
+
+/* Animação suave */
+transition: 0.2s ease;
+}
+
+/*
+Efeito ao passar o mouse.
+*/
+.nav-item:hover {
+background-color: var(--color-hover);
+
+color: var(--color-white);
+}
+
+/*
+Página atualmente selecionada.
+*/
+.nav-item.active {
+background-color: var(--color-primary);
+
+color: var(--color-white);
+
+font-weight: 600;
+}
+
+/* Área reservada para os ícones */
+.nav-icon {
+width: 22px;
+
+/* Centraliza o ícone */
+text-align: center;
+
+font-size: 19px;
+}
+
+/* ==================================================
+6. RODAPÉ DA BARRA LATERAL
+================================================== */
+
+.sidebar-footer {
+padding-top: 20px;
+
+border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-footer p {
+font-size: 12px;
+
+color: var(--color-text-secondary);
+
+text-align: center;
+}
+
+/* ==================================================
+7. ÁREA PRINCIPAL
+================================================== */
+
+/*
+A margem esquerda evita que o conteúdo
+fique escondido atrás da barra lateral.
+*/
+.main-content {
+min-height: 100vh;
+
+margin-left: 260px;
+
+padding: 45px;
+}
+
+/*
+Área temporária.
+Depois será substituída pelo dashboard.
+*/
+.welcome-area {
+max-width: 900px;
+}
+
+.welcome-area h2 {
+font-size: 38px;
+
+margin-bottom: 12px;
+}
+
+.welcome-area p {
+font-size: 18px;
+
+color: var(--color-text-secondary);
+}
+
+/* ==================================================
+8. RESPONSIVIDADE
+================================================== */
+
+/*
+Ajustes para telas menores.
+*/
+@media (max-width: 800px) {
+
+/* Diminui a largura da barra */
+.sidebar {
+width: 80px;
+
+padding: 25px 12px;
+
+}
+
+/* Oculta textos e mantém os ícones */
+.brand-text,
+.nav-item span:last-child,
+.sidebar-footer {
+display: none;
+}
+
+/* Centraliza os ícones */
+.brand {
+justify-content: center;
+}
+
+.nav-item {
+justify-content: center;
+
+padding: 15px;
+
+}
+
+/* Ajusta a área principal */
+.main-content {
+margin-left: 80px;
+
+padding: 30px 20px;
+
+
+}
+
+}

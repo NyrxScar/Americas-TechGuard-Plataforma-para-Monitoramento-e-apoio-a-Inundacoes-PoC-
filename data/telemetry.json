@@ -1,0 +1,147 @@
+{
+  "metadata": {
+    "simulation": true,
+    "municipality": "Blumenau",
+    "updated_at": "2026-08-04T14:00:00-03:00",
+    "unit_system": "metric",
+    "description": "Leituras ambientais simuladas recebidas pelos nós da plataforma."
+  },
+
+  "telemetry": [
+    {
+      "station_id": "ATG_BLU_001",
+      "timestamp": "2026-08-04T14:00:00-03:00",
+
+      "measurements": {
+        "water_level_m": 2.15,
+        "rainfall_mm": 8.4,
+        "temperature_c": 21.8,
+        "humidity_percent": 82
+      },
+
+      "communication": {
+        "channel_used": "LoRaWAN",
+        "delivery_status": "delivered"
+      }
+    },
+
+    {
+      "station_id": "ATG_BLU_002",
+      "timestamp": "2026-08-04T14:00:00-03:00",
+
+      "measurements": {
+        "water_level_m": 3.42,
+        "rainfall_mm": 31.6,
+        "temperature_c": 20.9,
+        "humidity_percent": 91
+      },
+
+      "communication": {
+        "channel_used": "LoRaWAN",
+        "delivery_status": "delivered"
+      }
+    },
+
+    {
+      "station_id": "ATG_BLU_003",
+      "timestamp": "2026-08-04T14:00:00-03:00",
+
+      "measurements": {
+        "water_level_m": 4.18,
+        "rainfall_mm": 47.8,
+        "temperature_c": 20.3,
+        "humidity_percent": 95
+      },
+
+      "communication": {
+        "channel_used": "Mesh",
+        "delivery_status": "delivered",
+        "fallback_reason": "LoRaWAN unavailable"
+      }
+    },
+
+    {
+      "station_id": "ATG_BLU_004",
+      "timestamp": "2026-08-04T14:00:00-03:00",
+
+      "measurements": {
+        "water_level_m": 2.84,
+        "rainfall_mm": 19.2,
+        "temperature_c": 21.1,
+        "humidity_percent": 87
+      },
+
+      "communication": {
+        "channel_used": "LoRaWAN",
+        "delivery_status": "delivered"
+      }
+    },
+
+    {
+      "station_id": "ATG_BLU_005",
+      "timestamp": "2026-08-04T14:00:00-03:00",
+
+      "measurements": {
+        "rainfall_mm": 12.5,
+        "temperature_c": 20.6,
+        "humidity_percent": 89
+      },
+
+      "communication": {
+        "channel_used": "LoRaWAN",
+        "delivery_status": "delivered"
+      }
+    },
+
+    {
+      "station_id": "ATG_BLU_006",
+      "timestamp": "2026-08-04T14:00:00-03:00",
+
+      "measurements": {
+        "water_level_m": 3.05,
+        "rainfall_mm": 27.4,
+        "temperature_c": 21.0,
+        "humidity_percent": 90
+      },
+
+      "communication": {
+        "channel_used": "LoRaWAN",
+        "delivery_status": "delivered"
+      }
+    },
+
+    {
+      "station_id": "ATG_BLU_007",
+      "timestamp": "2026-08-04T14:00:00-03:00",
+
+      "measurements": {
+        "rainfall_mm": 38.1,
+        "temperature_c": 20.2,
+        "humidity_percent": 94
+      },
+
+      "communication": {
+        "channel_used": "Mesh",
+        "delivery_status": "delivered",
+        "fallback_reason": "LoRaWAN unavailable"
+      }
+    },
+
+    {
+      "station_id": "ATG_BLU_008",
+      "timestamp": "2026-08-04T14:00:00-03:00",
+
+      "measurements": {
+        "water_level_m": 2.47,
+        "rainfall_mm": 15.8,
+        "temperature_c": 21.4,
+        "humidity_percent": 85
+      },
+
+      "communication": {
+        "channel_used": "LoRaWAN",
+        "delivery_status": "delivered"
+      }
+    }
+  ]
+}

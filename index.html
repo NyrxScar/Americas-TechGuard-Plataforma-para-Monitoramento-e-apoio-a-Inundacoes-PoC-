@@ -1,0 +1,213 @@
+
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+<head>
+  <!-- Define a codificação de caracteres -->
+  <meta charset="UTF-8">
+
+  <!-- Faz o layout se adaptar a celulares e telas menores -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Título exibido na aba do navegador -->
+  <title>Americas TechGuard</title>
+
+  <!-- Conecta o arquivo CSS principal -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+  <!--
+    Barra lateral de navegação.
+    Ela ficará fixa no lado esquerdo da aplicação.
+  -->
+  <aside class="sidebar">
+
+    <!-- Área da identidade visual do projeto -->
+    <div class="brand">
+
+      <!--
+        Espaço temporário para o logotipo.
+        Depois podemos substituir por uma imagem.
+      -->
+      <div class="brand-icon">
+        AT
+      </div>
+
+      <!-- Nome da plataforma -->
+      <div class="brand-text">
+        <h1>Americas</h1>
+        <span>TECHGUARD</span>
+      </div>
+
+    </div>
+
+    <!-- Menu principal de navegação -->
+    <nav class="navigation">
+
+      <!--
+        Página inicial.
+        A classe "active" indica a página atualmente aberta.
+      -->
+      <a href="index.html" class="nav-item active">
+        <span class="nav-icon">⌂</span>
+        <span>Início</span>
+      </a>
+
+      <!-- Página do mapa -->
+      <a href="mapa.html" class="nav-item">
+        <span class="nav-icon">⌖</span>
+        <span>Mapa</span>
+      </a>
+
+      <!-- Página de alertas -->
+      <a href="alertas.html" class="nav-item">
+        <span class="nav-icon">⚠</span>
+        <span>Alertas</span>
+      </a>
+
+      <!-- Página de abrigos -->
+      <a href="abrigos.html" class="nav-item">
+        <span class="nav-icon">⌂</span>
+        <span>Abrigos</span>
+      </a>
+
+      <!-- Página de simulação -->
+      <a href="simulacao.html" class="nav-item">
+        <span class="nav-icon">◉</span>
+        <span>Simulação</span>
+      </a>
+
+      <!-- Página técnica da Defesa Civil -->
+      <a href="defesa-civil.html" class="nav-item">
+        <span class="nav-icon">▣</span>
+        <span>Defesa Civil</span>
+      </a>
+
+    </nav>
+
+    <!-- Área inferior da barra lateral -->
+    <div class="sidebar-footer">
+
+      <!-- Informação temporária da PoC -->
+      <p>PoC • Blumenau/SC</p>
+
+    </div>
+
+  </aside>
+
+  <!--
+    Área principal da aplicação.
+    Os cards, alertas e dados serão adicionados depois.
+  -->
+  <main class="main-content">
+
+    <!-- Título temporário para confirmar o funcionamento -->
+    <section class="dashboard-header">
+
+  <div>
+    <p class="page-label">
+      MONITORAMENTO AMBIENTAL
+    </p>
+
+    <h2>
+      Visão geral de Blumenau
+    </h2>
+
+    <p>
+      Dados simulados recebidos pelos nós de monitoramento.
+    </p>
+  </div>
+
+  <div class="system-status">
+    <span class="status-indicator"></span>
+    Sistema operacional
+  </div>
+
+</section>
+
+
+<!-- Cards que receberão os dados pelo JavaScript -->
+<section class="dashboard-grid">
+
+  <!-- Temperatura média -->
+  <article class="data-card">
+
+    <span class="card-icon">🌡</span>
+
+    <div>
+      <p>Temperatura média</p>
+
+      <strong id="average-temperature">
+        Carregando...
+      </strong>
+    </div>
+
+  </article>
+
+
+  <!-- Maior nível de água -->
+  <article class="data-card">
+
+    <span class="card-icon">🌊</span>
+
+    <div>
+      <p>Maior nível monitorado</p>
+
+      <strong id="highest-water-level">
+        Carregando...
+      </strong>
+    </div>
+
+  </article>
+
+
+  <!-- Maior volume de chuva -->
+  <article class="data-card">
+
+    <span class="card-icon">🌧</span>
+
+    <div>
+      <p>Maior chuva registrada</p>
+
+      <strong id="highest-rainfall">
+        Carregando...
+      </strong>
+    </div>
+
+  </article>
+
+
+  <!-- Quantidade de nós -->
+  <article class="data-card">
+
+    <span class="card-icon">◉</span>
+
+    <div>
+      <p>Nós monitorados</p>
+
+      <strong id="total-stations">
+        Carregando...
+      </strong>
+    </div>
+
+  </article>
+
+</section>
+
+  </main>
+
+  <!--
+    Carrega primeiro o módulo responsável pelos dados.
+    O main.js usa funções criadas dentro do data.js.
+  -->
+  <script src="js/data.js"></script>
+
+  <!--
+    Inicializa a aplicação depois que os dados estiverem disponíveis.
+  -->
+  <script src="js/main.js"></script>
+
+</body>
+</html>
