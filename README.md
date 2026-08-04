@@ -194,3 +194,36 @@ Americas-TechGuard-Plataforma-para-Monitoramento-e-apoio-a-Inundacoes-PoC/
 ## 📜 Licença
 
 Este projeto é disponibilizado sob a licença **MIT**. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+
+
+Americas-TechGuard-PoC/
+│
+├── index.html                 # Dashboard principal
+│
+├── CSS/
+│   └── style.css              # Estilo
+│
+├── js/
+│   ├── main.js                # Lógica da tela
+│   └── data.js                # Leitura dos JSON
+│
+├── data/
+│   ├── stations.json          # Sensores cadastrados
+│   ├── telemetry.json         # Leituras IoT
+│   ├── risk_maps.json         # Resultado HAND
+│   ├── alerts.json            # Alertas gerados
+│   └── shelters.json          # Abrigos
+│
+├── iot/
+│   ├── simulator.py           # Seu simulador atual
+│   └── risk_engine.py         # Cruzamento IoT + HAND
+│
+├── gis/
+│   ├── calculoHandInteiro.py  # Seu pipeline atual
+│   └── output_maps/
+│       ├── mapa_ottobacias_blumenau.html
+│       ├── mapa_suscetibilidade_hand_blumenau.html
+│       └── relevo_blumenau_3d.html
+│
+└── README.md
