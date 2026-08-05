@@ -1,0 +1,186 @@
+{
+  "metadados": {
+    "gerado_em": "2026-08-05T20:15:00.773941+00:00",
+    "total_registros": 9,
+    "analise_compactacao_amostra": {
+      "bytes_original_json": 445,
+      "bytes_compactado_json": 175,
+      "economia_estimada_bytes": 270,
+      "reducao_percentual": 60.67,
+      "nota_explicativa": "A redução refere-se exclusivamente à economia estimada na estrutura do payload JSON. Não representa economia real de banda em redes LoRaWAN ou Meshtastic."
+    }
+  },
+  "telemetria": [
+    {
+      "message_id": "f6bed310-5342-46c2-81f1-25828628d2ea",
+      "station_id": "ATG_BLU_001",
+      "timestamp": "2026-08-05T20:15:00.751397+00:00",
+      "location": {
+        "latitude": -26.9165,
+        "longitude": -49.0715
+      },
+      "network_status": "connected",
+      "simulated_mqtt_topic": "americas_techguard/simulated/ATG_BLU_001/telemetry",
+      "simulation_processing_time_ms": 1.413,
+      "battery": {
+        "level_percent": 99.95
+      },
+      "readings": {
+        "water_level_m": 1.9,
+        "rainfall_accumulated_mm": 2.5
+      }
+    },
+    {
+      "message_id": "7cd0e745-ba3f-40ec-a8c5-d815221bf9c7",
+      "station_id": "ATG_BLU_002",
+      "timestamp": "2026-08-05T20:15:00.752938+00:00",
+      "location": {
+        "latitude": -26.9201,
+        "longitude": -49.0652
+      },
+      "network_status": "connected",
+      "simulated_mqtt_topic": "americas_techguard/simulated/ATG_BLU_002/telemetry",
+      "simulation_processing_time_ms": 1.414,
+      "battery": {
+        "level_percent": 99.95
+      },
+      "readings": {
+        "water_level_m": 1.9,
+        "rainfall_accumulated_mm": 2.5
+      }
+    },
+    {
+      "message_id": "edc3a9c3-62ac-4f60-a8a3-1ade85da8c4b",
+      "station_id": "ATG_BLU_003",
+      "timestamp": "2026-08-05T20:15:00.755001+00:00",
+      "location": {
+        "latitude": -26.9112,
+        "longitude": -49.082
+      },
+      "network_status": "connected",
+      "simulated_mqtt_topic": "americas_techguard/simulated/ATG_BLU_003/telemetry",
+      "simulation_processing_time_ms": 1.968,
+      "battery": {
+        "level_percent": 99.95
+      },
+      "readings": {
+        "water_level_m": 1.9,
+        "rainfall_accumulated_mm": 2.5
+      }
+    },
+    {
+      "message_id": "95bba49e-0d07-4a41-aa58-4a99bedc4eb6",
+      "station_id": "ATG_BLU_001",
+      "timestamp": "2026-08-05T20:15:00.757027+00:00",
+      "location": {
+        "latitude": -26.9165,
+        "longitude": -49.0715
+      },
+      "network_status": "fallback_active",
+      "simulated_mqtt_topic": "americas_techguard/simulated/ATG_BLU_001/telemetry",
+      "simulation_processing_time_ms": 1.521,
+      "battery": {
+        "level_percent": 99.9
+      },
+      "readings": {
+        "water_level_m": 2.3,
+        "rainfall_accumulated_mm": 5.0
+      }
+    },
+    {
+      "message_id": "bfd0b030-1f05-4920-ac25-f77c0899fb7f",
+      "station_id": "ATG_BLU_002",
+      "timestamp": "2026-08-05T20:15:00.758215+00:00",
+      "location": {
+        "latitude": -26.9201,
+        "longitude": -49.0652
+      },
+      "network_status": "debouncing",
+      "simulated_mqtt_topic": "americas_techguard/simulated/ATG_BLU_002/telemetry",
+      "simulation_processing_time_ms": 1.082,
+      "battery": {
+        "level_percent": 99.9
+      },
+      "readings": {
+        "water_level_m": 2.3,
+        "rainfall_accumulated_mm": 5.0
+      }
+    },
+    {
+      "message_id": "0dd0d752-b013-4294-b8dd-99160db622c7",
+      "station_id": "ATG_BLU_003",
+      "timestamp": "2026-08-05T20:15:00.759801+00:00",
+      "location": {
+        "latitude": -26.9112,
+        "longitude": -49.082
+      },
+      "network_status": "fallback_active",
+      "simulated_mqtt_topic": "americas_techguard/simulated/ATG_BLU_003/telemetry",
+      "simulation_processing_time_ms": 1.442,
+      "battery": {
+        "level_percent": 99.9
+      },
+      "readings": {
+        "water_level_m": 2.3,
+        "rainfall_accumulated_mm": 5.0
+      }
+    },
+    {
+      "message_id": "1613815e-e3e7-42dc-812d-23a13d4c9a47",
+      "station_id": "ATG_BLU_001",
+      "timestamp": "2026-08-05T20:15:00.761796+00:00",
+      "location": {
+        "latitude": -26.9165,
+        "longitude": -49.0715
+      },
+      "network_status": "unavailable",
+      "simulated_mqtt_topic": "americas_techguard/simulated/ATG_BLU_001/telemetry",
+      "simulation_processing_time_ms": 1.341,
+      "battery": {
+        "level_percent": 99.85
+      },
+      "readings": {
+        "water_level_m": 2.7,
+        "rainfall_accumulated_mm": 7.5
+      }
+    },
+    {
+      "message_id": "2389e12f-2259-4a72-82b9-1f806199f2ed",
+      "station_id": "ATG_BLU_002",
+      "timestamp": "2026-08-05T20:15:00.763363+00:00",
+      "location": {
+        "latitude": -26.9201,
+        "longitude": -49.0652
+      },
+      "network_status": "unavailable",
+      "simulated_mqtt_topic": "americas_techguard/simulated/ATG_BLU_002/telemetry",
+      "simulation_processing_time_ms": 1.469,
+      "battery": {
+        "level_percent": 99.85
+      },
+      "readings": {
+        "water_level_m": 2.7,
+        "rainfall_accumulated_mm": 7.5
+      }
+    },
+    {
+      "message_id": "3e098111-5585-4725-91da-586d700dafa5",
+      "station_id": "ATG_BLU_003",
+      "timestamp": "2026-08-05T20:15:00.765385+00:00",
+      "location": {
+        "latitude": -26.9112,
+        "longitude": -49.082
+      },
+      "network_status": "unavailable",
+      "simulated_mqtt_topic": "americas_techguard/simulated/ATG_BLU_003/telemetry",
+      "simulation_processing_time_ms": 1.921,
+      "battery": {
+        "level_percent": 99.85
+      },
+      "readings": {
+        "water_level_m": 2.7,
+        "rainfall_accumulated_mm": 7.5
+      }
+    }
+  ]
+}
