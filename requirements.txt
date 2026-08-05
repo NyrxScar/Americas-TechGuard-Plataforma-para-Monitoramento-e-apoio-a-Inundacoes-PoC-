@@ -1,0 +1,22 @@
+# Dependencies
+numpy
+pandas
+scipy
+geopandas
+fiona
+shapely
+pyproj
+rasterio
+rioxarray
+xarray
+contextily
+planetary-computer
+pystac-client
+whitebox
+folium
+matplotlib
+plotly
+paho-mqtt
+python-dotenv
+requests
+pytest
