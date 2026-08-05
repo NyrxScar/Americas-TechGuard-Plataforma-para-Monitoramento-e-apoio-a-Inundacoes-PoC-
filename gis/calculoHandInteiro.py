@@ -3013,50 +3013,40 @@ def main() -> None:
             time.perf_counter()
             - inicio_total
         )
-
         print(
             "\n" +
             "=" * 80
         )
-
         print(
             "PIPELINE CONCLUÍDO "
             "COM SUCESSO"
         )
-
         print(
             "=" * 80
         )
-
         print(
             "\nTEMPO TOTAL: "
             f"{formatar_tempo(duracao_total)}"
         )
-
         print(
             "\nARQUIVOS PRINCIPAIS:"
         )
-
         print(
             f"  DEM: "
             f"{dem_clipped}"
         )
-
         print(
             f"  HAND: "
             f"{hand_output}"
         )
-
         print(
             f"  MAPA: "
             f"{mapa_final}"
         )
-
         print(
             f"\nLOG: "
             f"{diretorios['logs'] / 'pipeline_hand.log'}"
         )
-
         print(
             "\n" +
             "=" * 80
@@ -3070,12 +3060,10 @@ def main() -> None:
             "AVISO",
             logger,
         )
-
         print(
             "\n[INTERROMPIDO] "
             "Execução cancelada."
         )
-
         sys.exit(130)
 
     except Exception as err:
@@ -3085,33 +3073,25 @@ def main() -> None:
             "ERRO",
             logger,
         )
-
         print(
             "\n" +
             "=" * 80
         )
-
         print(
             "PIPELINE INTERROMPIDO "
             "POR ERRO"
         )
-
         print(
             "=" * 80
         )
-
         print(
             f"\nErro: {err}"
         )
-
         print(
             "\nConsulte o arquivo "
             "de log para mais detalhes."
         )
-
         raise
-
-
 if __name__ == "__main__":
     main()
 
