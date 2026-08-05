@@ -1,0 +1,275 @@
+{
+    "metadata": {
+        "project": "Americas TechGuard",
+        "engine": "Risk Engine v2",
+        "generated_at": "2026-08-05T14:38:23.038587+00:00",
+        "total_alerts": 8
+    },
+    "alerts": [
+        {
+            "alert_id": "ATG-20260805-001",
+            "event": {
+                "type": "FLOOD_RISK",
+                "timestamp": "2026-08-05T14:38:23.036553+00:00"
+            },
+            "station": {
+                "id": "ATG_BLU_001"
+            },
+            "risk": {
+                "level": "safe",
+                "label": "Seguro",
+                "severity": 0,
+                "score": 0,
+                "confidence": 0.9
+            },
+            "measurements": {
+                "water_level_m": 0.6,
+                "rainfall_mm": 0.0,
+                "humidity_percent": 65
+            },
+            "communication": {
+                "channel": "LoRaWAN"
+            },
+            "reasons": [],
+            "recommendations": [
+                "Continuar monitoramento."
+            ],
+            "requires_action": false
+        },
+        {
+            "alert_id": "ATG-20260805-002",
+            "event": {
+                "type": "FLOOD_RISK",
+                "timestamp": "2026-08-05T14:38:23.038400+00:00"
+            },
+            "station": {
+                "id": "ATG_BLU_002"
+            },
+            "risk": {
+                "level": "attention",
+                "label": "Atenção",
+                "severity": 1,
+                "score": 28,
+                "confidence": 0.9
+            },
+            "measurements": {
+                "water_level_m": 1.8,
+                "rainfall_mm": 12.5,
+                "humidity_percent": 80
+            },
+            "communication": {
+                "channel": "LoRaWAN"
+            },
+            "reasons": [],
+            "recommendations": [
+                "Acompanhar evolução dos sensores.",
+                "Verificar áreas vulneráveis."
+            ],
+            "requires_action": false
+        },
+        {
+            "alert_id": "ATG-20260805-003",
+            "event": {
+                "type": "FLOOD_RISK",
+                "timestamp": "2026-08-05T14:38:23.038451+00:00"
+            },
+            "station": {
+                "id": "ATG_BLU_003"
+            },
+            "risk": {
+                "level": "alert",
+                "label": "Alerta",
+                "severity": 2,
+                "score": 53,
+                "confidence": 0.8
+            },
+            "measurements": {
+                "water_level_m": 2.6,
+                "rainfall_mm": 34.0,
+                "humidity_percent": 92
+            },
+            "communication": {
+                "channel": "Mesh"
+            },
+            "reasons": [
+                "Elevação significativa do nível da água.",
+                "Volume elevado de precipitação.",
+                "Comunicação utilizando fallback Mesh."
+            ],
+            "recommendations": [
+                "Notificar equipe de monitoramento.",
+                "Preparar resposta preventiva."
+            ],
+            "requires_action": true
+        },
+        {
+            "alert_id": "ATG-20260805-004",
+            "event": {
+                "type": "FLOOD_RISK",
+                "timestamp": "2026-08-05T14:38:23.038476+00:00"
+            },
+            "station": {
+                "id": "ATG_BLU_004"
+            },
+            "risk": {
+                "level": "critical",
+                "label": "Crítico",
+                "severity": 3,
+                "score": 80,
+                "confidence": 0.95
+            },
+            "measurements": {
+                "water_level_m": 3.4,
+                "rainfall_mm": 52.8,
+                "humidity_percent": 98
+            },
+            "communication": {
+                "channel": "LoRaWAN"
+            },
+            "reasons": [
+                "Nível da água acima do limite seguro.",
+                "Chuva intensa detectada.",
+                "Umidade crítica indicando saturação ambiental."
+            ],
+            "recommendations": [
+                "Acionar protocolo de emergência.",
+                "Avaliar evacuação preventiva.",
+                "Verificar abrigos disponíveis."
+            ],
+            "requires_action": true
+        },
+        {
+            "alert_id": "ATG-20260805-005",
+            "event": {
+                "type": "FLOOD_RISK",
+                "timestamp": "2026-08-05T14:38:23.038501+00:00"
+            },
+            "station": {
+                "id": "ATG_BLU_005"
+            },
+            "risk": {
+                "level": "critical",
+                "label": "Crítico",
+                "severity": 3,
+                "score": 90,
+                "confidence": 0.95
+            },
+            "measurements": {
+                "water_level_m": 4.1,
+                "rainfall_mm": 55.0,
+                "humidity_percent": 98
+            },
+            "communication": {
+                "channel": "LoRaWAN"
+            },
+            "reasons": [
+                "Nível da água extremamente elevado.",
+                "Chuva intensa detectada.",
+                "Umidade crítica indicando saturação ambiental."
+            ],
+            "recommendations": [
+                "Acionar protocolo de emergência.",
+                "Avaliar evacuação preventiva.",
+                "Verificar abrigos disponíveis."
+            ],
+            "requires_action": true
+        },
+        {
+            "alert_id": "ATG-20260805-006",
+            "event": {
+                "type": "FLOOD_RISK",
+                "timestamp": "2026-08-05T14:38:23.038527+00:00"
+            },
+            "station": {
+                "id": "ATG_BLU_006"
+            },
+            "risk": {
+                "level": "alert",
+                "label": "Alerta",
+                "severity": 2,
+                "score": 63,
+                "confidence": 0.9
+            },
+            "measurements": {
+                "water_level_m": 3.0,
+                "rainfall_mm": 40.0,
+                "humidity_percent": 90
+            },
+            "communication": {
+                "channel": "LoRaWAN"
+            },
+            "reasons": [
+                "Nível da água acima do limite seguro.",
+                "Volume elevado de precipitação."
+            ],
+            "recommendations": [
+                "Notificar equipe de monitoramento.",
+                "Preparar resposta preventiva."
+            ],
+            "requires_action": true
+        },
+        {
+            "alert_id": "ATG-20260805-007",
+            "event": {
+                "type": "FLOOD_RISK",
+                "timestamp": "2026-08-05T14:38:23.038549+00:00"
+            },
+            "station": {
+                "id": "ATG_BLU_007"
+            },
+            "risk": {
+                "level": "safe",
+                "label": "Seguro",
+                "severity": 0,
+                "score": 5,
+                "confidence": 0.8
+            },
+            "measurements": {
+                "water_level_m": 0.6,
+                "rainfall_mm": 0.0,
+                "humidity_percent": 65
+            },
+            "communication": {
+                "channel": "Mesh"
+            },
+            "reasons": [
+                "Comunicação utilizando fallback Mesh."
+            ],
+            "recommendations": [
+                "Continuar monitoramento."
+            ],
+            "requires_action": false
+        },
+        {
+            "alert_id": "ATG-20260805-008",
+            "event": {
+                "type": "FLOOD_RISK",
+                "timestamp": "2026-08-05T14:38:23.038572+00:00"
+            },
+            "station": {
+                "id": "ATG_BLU_008"
+            },
+            "risk": {
+                "level": "attention",
+                "label": "Atenção",
+                "severity": 1,
+                "score": 28,
+                "confidence": 0.9
+            },
+            "measurements": {
+                "water_level_m": 1.8,
+                "rainfall_mm": 12.5,
+                "humidity_percent": 80
+            },
+            "communication": {
+                "channel": "LoRaWAN"
+            },
+            "reasons": [],
+            "recommendations": [
+                "Acompanhar evolução dos sensores.",
+                "Verificar áreas vulneráveis."
+            ],
+            "requires_action": false
+        }
+    ]
+}
