@@ -1,38 +1,40 @@
-# Node.js
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*.pyc
+
+.venv/
+venv/
+**/.venv/
+**/venv/
+
+.env
+.env.*
+
 node_modules/
 **/node_modules/
 package-lock.json
-
-# Python / Virtual Environments
-venv/
-.venv/
-**/venv/
-**/__pycache__/
-
-# Logs & Temp
-*.log
-.DS_Store
-
-node_modules/
 dist/
-.env
 
-gis/output_rasters/dem_source.tif
+*.log
+logs/
 
-# Ambiente virtual Python
-.venv/
-
-# Arquivos temporários do Python
-__pycache__/
-*.pyc
-
-# Dados e rasters GIS grandes
 gis/outputs_dem/
 gis/outputs_hand/
 
-# Arquivos temporários do processamento GIS
 gis/temp/
 gis/cache/
-# GIS generated outputs
+
 gis/output_maps/
 
+*.tif
+*.tiff
+
+data/processed/*
+!data/processed/.gitkeep
+
+.DS_Store
+Thumbs.db
+
+.vscode/
+.idea/
