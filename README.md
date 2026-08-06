@@ -188,8 +188,20 @@ Americas-TechGuard-PoC/
 │   └── risk_engine.py             # Motor de risco geoespacial multicritério
 │
 ├── gis/
-│   ├── calculoHandInteiro.py      # Pipeline completo HAND (DEM → WhiteboxTools → raster)
-│   └── export_hand_json.py        # Exportação do raster HAND para JSON consumível
+│   ├── calculoHandInteiro.py      # Pipeline completo HAND (DEM → WhiteboxTools → rasters)
+│   ├── export_hand_json.py        # Exportação do raster HAND para JSON consumível
+│   ├── outputs_dem/
+│   │   └── dem_recortado.tif      # Modelo Digital de Elevação recortado (Copernicus GLO-30)
+│   ├── outputs_hand/
+│   │   ├── hand.tif               # Raster principal HAND (Altura sobre a Drenagem)
+│   │   ├── dem_breached.tif       # DEM com condicionamento hidrológico
+│   │   ├── d8_pntr.tif            # Direção de fluxo D8
+│   │   ├── d8_flw.tif             # Acumulação de fluxo
+│   │   └── streams.tif            # Rede de drenagem extraída
+│   └── output_maps/
+│       ├── mapa_ottobacias_blumenau.html          # Mapa de bacias hidrográficas
+│       ├── mapa_suscetibilidade_hand_blumenau.html# Mapa de suscetibilidade HAND
+│       └── relevo_blumenau_3d.html                # Visualização 3D do relevo
 │
 ├── data/
 │   ├── input/
@@ -221,27 +233,256 @@ Americas-TechGuard-PoC/
 
 ---
 
-## 🚀 Guia de Execução da PoC
+# 🚀 Guia de Execução Sequencial da PoC
 
-### 1. Instalar dependências
-```bash
+Este documento apresenta o passo a passo para configurar o ambiente e executar todos os módulos da **PoC Americas TechGuard**, seguindo o fluxo completo:
+
+PS: Não esqueça de acessar e usar a branch Min_Poc
+
+---
+
+# 1. Preparação do Ambiente (Windows)
+
+## 1.1 Criar ambiente virtual
+
+Na raiz do projeto:
+
+```powershell
+python -m venv .venv
+```
+
+Ativar o ambiente virtual:
+
+```powershell
+.\.venv\Scripts\activate
+```
+
+Validar instalação:
+
+```powershell
+python --version
+pip --version
+```
+
+---
+
+# 2. Redução do Caminho do Projeto (Recomendado no Windows)
+
+## ⚠️ Por que utilizar?
+
+O pipeline utiliza bibliotecas geoespaciais que podem apresentar falhas quando o caminho absoluto do projeto é muito extenso.
+
+Principais bibliotecas afetadas:
+
+- Rasterio
+- GDAL
+- PROJ
+- GeoPandas
+- WhiteboxTools
+
+Para evitar problemas de limite de caminho do Windows, recomenda-se utilizar uma unidade virtual com `subst`.
+
+---
+
+## 2.1 Criar unidade virtual
+
+Execute:
+
+```powershell
+subst X: "CAMINHO_COMPLETO_DA_RAIZ_DO_PROJETO"
+```
+
+Exemplo:
+
+```powershell
+subst X: "C:\Users\Delcio\Documents\Americas-TechGuard-Plataforma-para-Monitoramento-e-apoio-a-Inundacoes-PoC-"
+```
+
+Acesse a unidade:
+
+```powershell
+X:
+```
+
+Ative novamente o ambiente virtual:
+
+```powershell
+.\.venv\Scripts\activate
+```
+
+---
+
+# 3. Instalação das Dependências
+
+Instale todas as dependências do projeto:
+
+```powershell
 pip install -r requirements.txt
 ```
 
-### 2. Executar Simulador IoT
-```bash
+Principais componentes:
+
+| Biblioteca | Utilização |
+|---|---|
+| GeoPandas | Manipulação de dados vetoriais |
+| Rasterio | Processamento de dados raster |
+| GDAL | Operações geoespaciais |
+| PyProj | Transformação de coordenadas |
+| WhiteboxTools | Processamento hidrológico HAND |
+
+---
+
+# 4. Inicialização do WhiteboxTools
+
+Na primeira execução, o WhiteboxTools realiza automaticamente o download do binário necessário.
+
+Execute:
+
+```powershell
+python -c "from whitebox import WhiteboxTools; wbt=WhiteboxTools(); print(wbt.version())"
+```
+
+Saída esperada:
+
+```text
+WhiteboxTools v2.4.0
+```
+
+> Caso uma página do navegador seja aberta durante o download, basta fechá-la e retornar ao terminal.
+
+---
+
+# 5. Configuração da Variável PROJ (Windows)
+
+Antes de executar o pipeline:
+
+```powershell
+$env:PROJ_LIB=""
+```
+
+Essa configuração evita conflitos entre:
+
+- Instalação PROJ do PostgreSQL/PostGIS;
+- Instalação PROJ utilizada pelo Python (`pyproj`).
+
+---
+
+# 6. Execução do Pipeline Geoespacial HAND 🌎
+
+Execute:
+
+```powershell
+python gis/calculoHandInteiro.py
+```
+
+O pipeline realiza:
+
+1. Download dos limites municipais do IBGE;
+2. Seleção da área de estudo;
+3. Consulta das Ottobacias ANA;
+4. Aquisição do Modelo Digital de Elevação;
+5. Recorte e preparação do DEM;
+6. Processamento hidrológico HAND;
+7. Geração dos mapas e produtos finais.
+
+---
+## Saídas geradas
+
+Produtos gerados:
+
+- Modelo Digital de Elevação processado;
+- Raster HAND;
+- Mapas interativos;
+- Dados utilizados pelo motor de risco.
+
+---
+
+# 7. Exportação da Matriz HAND 📊
+
+Após o processamento geoespacial:
+
+```powershell
+python gis/export_hand_json.py
+```
+
+Saída:
+
+```text
+data/
+└── processed/
+    └── hand_metrics.json
+```
+
+O arquivo contém os valores derivados do modelo HAND utilizados pelo sistema de análise de risco.
+
+---
+
+# 8. Execução do Simulador IoT 📡
+
+Execute:
+
+```powershell
 python IOT/simulator.py
 ```
-*Gera `data/processed/telemetry_output.json` e `data/mapa_estacoes.html`.*
 
-### 3. Executar Motor de Risco
-```bash
+O simulador gera dados telemétricos dos sensores virtuais.
+
+Saídas:
+
+```text
+data/
+├── processed/
+│   └── telemetry_output.json
+│
+└── mapa_estacoes.html
+```
+
+Dados produzidos:
+
+- Identificação dos sensores;
+- Localização geográfica;
+- Leituras simuladas;
+- Histórico temporal.
+
+---
+
+# 9. Execução do Risk Engine ⚠️
+
+Execute:
+
+```powershell
 python IOT/risk_engine.py
 ```
-*Gera `data/processed/telemetry_processed_with_risk.json`.*
 
-### 4. Visualizar o Mapa Interativo
-Abra o arquivo `data/mapa_estacoes.html` no navegador.
+O motor de risco realiza o cruzamento entre:
+
+- Dados simulados dos sensores IoT;
+- Informações topográficas do HAND;
+- Regras de classificação de risco.
+
+
+# ⚠️ Observação Importante — Windows
+
+Em ambientes Windows, recomenda-se:
+
+✅ Utilizar `subst` para reduzir o caminho absoluto do projeto;
+
+ou
+
+✅ Manter o projeto em um caminho curto:
+
+```text
+C:\Projects\Americas-TechGuard
+```
+
+Isso evita problemas relacionados ao limite máximo de caminhos utilizados por bibliotecas geoespaciais.
+
+Bibliotecas afetadas:
+
+- GDAL;
+- Rasterio;
+- GeoPandas;
+- WhiteboxTools.
 
 ---
 
