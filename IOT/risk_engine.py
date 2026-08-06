@@ -212,11 +212,19 @@ if __name__ == "__main__":
     print(f"[1/4] Configurando diretório de dados: {DATA_DIR}")
     DATA_DIR.mkdir(parents=True, exist_ok=True)
 
-    # Definição dos caminhos alinhada à estrutura do projeto (telemetry_output.json)
-    TELEMETRY_PATH = DATA_DIR / "telemetry_output.json"
-    TELEMETRY_FILE = TELEMETRY_PATH  # Alias para compatibilidade
-    HAND_METRICS_PATH = DATA_DIR / "hand_metrics.json"
-    OUTPUT_RISK_PATH = DATA_DIR / "telemetry_processed_with_risk.json"
+    PROCESSED_DIR = DATA_DIR / "processed"
+    PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
+
+    TELEMETRY_PATH = PROCESSED_DIR / "telemetry_output.json"
+    if not TELEMETRY_PATH.exists():
+        TELEMETRY_PATH = DATA_DIR / "telemetry_output.json"
+
+    HAND_METRICS_PATH = PROCESSED_DIR / "hand_metrics.json"
+    if not HAND_METRICS_PATH.exists():
+        HAND_METRICS_PATH = DATA_DIR / "hand_metrics.json"
+
+    OUTPUT_RISK_PATH = PROCESSED_DIR / "telemetry_processed_with_risk.json"
+    OUTPUT_RISK_ALT_PATH = DATA_DIR / "telemetry_processed_with_risk.json"
 
     print(f"[2/4] Carregando arquivo de telemetria: {TELEMETRY_PATH.name}")
     if not TELEMETRY_PATH.exists():
@@ -290,6 +298,8 @@ if __name__ == "__main__":
     }
 
     with open(OUTPUT_RISK_PATH, "w", encoding="utf-8") as f:
+        json.dump(resultado_final, f, indent=2, ensure_ascii=False)
+    with open(OUTPUT_RISK_ALT_PATH, "w", encoding="utf-8") as f:
         json.dump(resultado_final, f, indent=2, ensure_ascii=False)
 
     print("\n" + "-" * 65)
