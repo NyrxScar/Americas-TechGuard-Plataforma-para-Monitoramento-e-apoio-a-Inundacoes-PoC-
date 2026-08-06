@@ -1,193 +1,382 @@
-# 🛡️ Americas TechGuard - Plataforma para Monitoramento e Apoio a Inundações (PoC)
+# 🛡️ Americas TechGuard
+## Plataforma para Monitoramento e Apoio a Inundações — Prova de Conceito
 
-[![PoC Status](https://img.shields.io/badge/Status-PoC%20Funcional-success?style=for-the-badge)](https://github.com/NyrxScar/Americas-TechGuard-Plataforma-para-Monitoramento-e-apoio-a-Inundacoes-PoC-)
-[![Node.js](https://img.shields.io/badge/Backend-Node.js%20%7C%20Express%20%7C%20TypeScript-blue?style=for-the-badge&logo=node.js)](https://nodejs.org)
-[![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL%20%7C%20PostGIS-336791?style=for-the-badge&logo=postgresql)](https://postgis.net)
-[![Python GIS](https://img.shields.io/badge/GIS%20%26%20IA-Python%20%7C%20WhiteboxTools-3776AB?style=for-the-badge&logo=python)](https://python.org)
-[![Rede Mesh](https://img.shields.io/badge/IoT-LoRaWAN%20%7C%20Meshtastic-orange?style=for-the-badge)](https://meshtastic.org)
-
-Plataforma integrada de **monitoramento hidrológico em tempo real, prevenção de desastres e apoio à tomada de decisão contra inundações**, desenvolvida como Proof of Concept (PoC) com foco na bacia do Rio Itajaí-Açú (município de Blumenau/SC).
-
----
-
-## 📌 Visão Geral do Sistema
-
-A plataforma **Americas TechGuard** combina tecnologia de redes resilientes IoT, geoprocessamento hidrológico avançado e arquitura de dados espacial para responder a desafios críticos em cenários de cheias extremas:
-
-1. **Rede Mesh / LoRaWAN Resiliente**: Comunicação via rádio (Sub-GHz) entre nós de monitoramento físico e repetidores em cotas elevadas, garantindo o envio de telemetria mesmo em caso de queda de energia ou redes celulares.
-2. **Modelo Hidrológico HAND (Height Above Nearest Drainage)**: Algoritmo de elevação relativa sobre a drenagem para mapeamento de suscetibilidade e manchas de inundação.
-3. **API REST Espacial (PostGIS)**: Servidor Node.js/TypeScript preparado para ingerir telemetrias contínuas e servir geometrias em formato `GeoJSON` para consumo em dashboards GIS.
-4. **Simulador de Campo**: Módulo em Python para envio de eventos estocásticos de cheia e telemetria de sensores.
+[![Status](https://img.shields.io/badge/Status-PoC%20Funcional-success?style=for-the-badge)](https://github.com/NyrxScar/Americas-TechGuard-Plataforma-para-Monitoramento-e-apoio-a-Inundacoes-PoC-)
+[![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+[![GIS](https://img.shields.io/badge/GIS-WhiteboxTools%20%7C%20Rasterio%20%7C%20GeoPandas-4CAF50?style=for-the-badge)](https://www.whiteboxgeo.com/)
+[![IoT](https://img.shields.io/badge/IoT-LoRaWAN%20%7C%20Meshtastic-FF6B35?style=for-the-badge)](https://meshtastic.org)
+[![Eixo](https://img.shields.io/badge/Eixo-Integra%C3%A7%C3%A3o%20de%20Sistemas-blueviolet?style=for-the-badge)](#)
 
 ---
 
-## 🏗️ Arquitetura do Projeto
+| Campo | Informação |
+|---|---|
+| **Estudante** | Nyrx Oliveira de Aquino Farias |
+| **Eixo** | Integração de Sistemas — Dados Ambientais, IA, Nowcasting, LoRa/Meshtastic, Alertas Móveis |
+| **Modalidade** | Prova de Conceito (PoC) |
+| **Período** | 20/07/2026 até 06/08/2026 |
+| **Docentes** | Valério Piana, Lucas Lacerda e Alex Salazar |
 
-```mermaid
-graph TD;
-    subgraph "Camada de Campo (IoT & Redes Resilientes)"
-        S1[Nó Ponte de Ferro] -->|LoRaWAN / Meshtastic| SIM[Simulador Python IoT]
-        S2[Nó Morro Nova Rússia] -->|Saltos Mesh| SIM
-        S3[Nó Ribeirão Garcia] -->|Telemetria| SIM
-    end
+---
 
-    subgraph "Processamento Geoespacial (GIS)"
-        DEM[DEM ANADEM / Copernicus GLO-30] --> WBT[WhiteboxTools Pipeline]
-        ANA[Ottobacias ANA / IBGE] --> WBT
-        WBT --> HAND[Modelo HAND - Mapas de Suscetibilidade]
-    end
+# 🟢 PARTE 1: IMPLEMENTAÇÃO ATUAL DA PROVA DE CONCEITO (`branch: Min_Poc`)
 
-    subgraph "Camada de Dados & API Server"
-        SIM -->|POST /api/v1/telemetria| API[Express API Server - Node.js/TS]
-        API <--> DB[(PostgreSQL + PostGIS)]
-        HAND <--> DB
-    end
+Esta primeira parte do documento descreve a **versão funcional executável** presente no repositório.
 
-    subgraph "Interface & Apoio à Decisão"
-        API -->|GET /api/v1/estacoes GeoJSON| FE[Client Frontend React / Web GIS]
-    end
+---
+
+## 📌 Sobre o Projeto
+
+A **Americas TechGuard** é uma plataforma integrada de monitoramento hidrológico e apoio à tomada de decisão em cenários de inundação. Esta Prova de Conceito demonstra, de ponta a ponta, o pipeline completo de um sistema real: desde a simulação de sensores IoT de campo até a classificação geoespacial de risco de inundação, com base no modelo hidrológico HAND (Height Above Nearest Drainage) aplicado à bacia do Rio Itajaí-Açú, no município de **Blumenau/SC** — uma das regiões com maior histórico de cheias do Brasil.
+
+O projeto foi desenvolvido de forma inteiramente local (sem dependência de infraestrutura de nuvem), com todos os dados, modelos e processamentos executáveis a partir do próprio repositório.
+
+---
+
+## 🎯 Objetivos da PoC Atual
+
+- Simular uma rede de sensores IoT resiliente (LoRaWAN + Meshtastic) que transmite telemetria ambiental mesmo em cenários de falha de infraestrutura;
+- Processar dados geoespaciais reais (DEM/HAND) para produzir uma matriz de suscetibilidade topográfica à inundação;
+- Cruzar telemetria de campo com dados HAND para classificar o risco hidrológico por estação, de forma fundamentada e explicável;
+- Demonstrar um pipeline funcional de dados que vai do sensor à classificação de risco final, consumível por um dashboard web;
+- Contribuir com uma base técnica sólida para evolução futura em direção a um sistema de alerta precoce real.
+
+---
+
+## ⚙️ Justificativa
+
+### Qual problema a solução busca resolver
+
+Eventos de inundação extrema no Vale do Itajaí causam perdas humanas e materiais recorrentes. A falta de sistemas locais de monitoramento em tempo real, especialmente em cenários onde a infraestrutura de comunicação (energia elétrica, redes celulares) é a primeira a falhar, compromete a capacidade de resposta de Defesa Civil e comunidades.
+
+Este projeto propõe uma arquitetura de sensoriamento resiliente que opera sobre redes de rádio de baixo consumo (LoRaWAN e Meshtastic), capaz de continuar transmitindo dados críticos mesmo durante o colapso das redes convencionais.
+
+### Quem é o usuário da tecnologia
+
+- **Defesa Civil municipal** — para monitoramento contínuo e acionamento de alertas;
+- **Gestores de emergência** — para apoio à tomada de decisão sobre evacuação e ativação de abrigos;
+- **Pesquisadores e técnicos em hidrologia** — para análise e calibração do modelo de risco;
+- **Comunidades em zonas de risco** — como receptoras finais dos alertas gerados.
+
+---
+
+## 🏗️ Arquitetura e Pipeline da PoC Executável
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    CAMADA DE CAMPO (IoT)                        │
+│                                                                 │
+│  [Nó ATG_BLU_001]  [Nó ATG_BLU_002]  [Nó ATG_BLU_003]        │
+│  Ponte de Ferro     Morro Nova Rússia   Ribeirão Garcia         │
+│       │                   │                   │                 │
+│       └──── LoRaWAN ──────┴──── Mesh ─────────┘                │
+└─────────────────────────┬───────────────────────────────────────┘
+                          │ Telemetria (JSON/MQTT simulado)
+┌─────────────────────────▼───────────────────────────────────────┐
+│                SIMULADOR IoT  (IOT/simulator.py)                │
+│  • Gera payloads UUID v4 validados                              │
+│  • 3 cenários: NORMAL / DEGRADACAO_LORA / INDISPONIBILIDADE     │
+│  • Saída: data/processed/telemetry_output.json                  │
+└─────────────────────────┬───────────────────────────────────────┘
+                          │
+          ┌───────────────┴───────────────────┐
+          │                                   │
+┌─────────▼──────────┐             ┌──────────▼──────────────────┐
+│  PIPELINE GIS      │             │  MOTOR DE RISCO             │
+│  (gis/)            │             │  (IOT/risk_engine.py)       │
+│                    │             │                             │
+│ calculoHand        │             │ • Carrega hand_metrics.json │
+│ Inteiro.py         │             │ • Projeta coords → UTM 22S  │
+│ → hand.tif         │             │ • KDTree: busca HAND mais   │
+│                    │             │   próximo (raio 500m)       │
+│ export_hand        │             │ • Classificação multicritério│
+│ _json.py           │─────────────▶   SEGURO / ATENÇÃO /        │
+│ → hand_metrics     │             │   ALERTA / CRÍTICO          │
+│   .json            │             │                             │
+└────────────────────┘             │ Saída:                      │
+                                   │ telemetry_processed_        │
+                                   │ with_risk.json              │
+                                   └─────────────────────────────┘
 ```
 
 ---
 
-## 📂 Estrutura de Diretórios do Repositório
+## 📥 Dados de Entrada
 
-```text
-Americas-TechGuard-Plataforma-para-Monitoramento-e-apoio-a-Inundacoes-PoC/
-├── 📁 server/                 # API REST Backend (Node.js / Express / TypeScript)
-│   ├── 📄 package.json
-│   ├── 📄 tsconfig.json       # Configuração TypeScript
-│   └── 📁 src/
-│       ├── 📄 app.ts          # Configuração Express e rotas v1
-│       ├── 📄 index.ts        # Ponto de entrada e servidor HTTP
-│       ├── 📁 config/         # Conexão com pool PostgreSQL/PostGIS (database.ts)
-│       ├── 📁 controllers/    # Controladores da API (telemetryController.ts)
-│       ├── 📁 repositories/   # Acesso ao banco e queries espaciais (telemetryRepository.ts)
-│       └── 📁 routes/         # Rotas da telemetria (/telemetria, /estacoes)
-│
-├── 📁 database/               # Esquema de Banco de Dados PostGIS & Seeds
-│   ├── 📁 migrations/
-│   │   └── 📄 001_create_postgis_tables.sql  # Tabelas estacoes_monitoramento e leituras_sensores
-│   └── 📁 seeds/
-│       └── 📄 01_estacoes_blumenau.sql       # Povoamento dos Nós da Rede Mesh de Blumenau
-│
-├── 📁 gis/                    # Processamento Geoespacial e Modelagem HAND
-│   ├── 📄 calculoHandInteiro.py # Pipeline completo executável (IBGE/ANA, DEM, HAND 2D/3D)
-│   ├── 📄 calculate_hand.py   # Script modular orquestrador do WhiteboxTools
-│   ├── 📄 requirements.txt    # Dependências Python geoespaciais (Whitebox, GeoPandas, etc.)
-│   ├── 📄 README.md           # Guia específico do módulo GIS
-│   └── 📁 src/
-│       └── 📄 visualization.py# Mapeamento estático e interativo (Folium, Matplotlib)
-│
-├── 📁 simulator/              # Simulador IoT de Telemetria e Sensores
-│   ├── 📄 main.py             # Script principal da simulação Python
-│   ├── 📄 risk_engine.py      # Cálculo de níveis de risco hidrológico
-│   └── 📄 requirements.txt    # Dependências do simulador
-│
-├── 📁 client/                 # Interface do Usuário / Frontend Web GIS
-│   └── 📁 src/                # Componentes React e visualizações
-│
-├── 📁 docs/                   # Documentação Técnica da Arquitetura
-│   ├── 📄 architecture.md
-│   ├── 📄 api-documentation.md
-│   └── 📄 database-model.md
-│
-├── 📁 scripts/                # Scripts de Inicialização Automática (.ps1)
-│   ├── 📄 setup.ps1           # Instalação geral de dependências
-│   ├── 📄 run_server.ps1      # Execução da API
-│   ├── 📄 run_simulator.ps1   # Execução do simulador
-│   └── 📄 run_tests.ps1       # Bateria de testes
-│
-├── 📄 docker-compose.yml       # Orquestração da infraestrutura Docker (PostGIS)
-├── 📄 .env.example            # Modelo de variáveis de ambiente
-└── 📄 README.md               # Este documento
+| Fonte | Tipo | Descrição |
+|---|---|---|
+| **Simulador IoT** | JSON (telemetria) | Payloads de sensores: nível de água (m), chuva acumulada (mm), bateria, status de rede |
+| **Raster HAND** (`hand.tif`) | GeoTIFF | Elevação relativa à drenagem, derivado de DEM Copernicus GLO-30 e Ottobacias ANA |
+| **`hand_metrics.json`** | JSON espacial | ~21 MB — matriz de suscetibilidade HAND com lat/lon, valor HAND (m), classe e peso de risco |
+| **`shelters.json`** | JSON | 4 abrigos municipais simulados de Blumenau com capacidade, ocupação e localização |
+
+---
+
+## 🔄 Como os Dados São Processados na PoC
+
+### 1. Geração de Telemetria (`IOT/simulator.py`)
+
+O `IoTSimulator` itera sobre 3 estações cadastradas em 3 ciclos determinísticos que simulam a progressão de um evento de cheia:
+
+| Ciclo | Cenário | Status de Rede | Nível d'água | Chuva Acum. |
+|---|---|---|---|---|
+| 1 | `NORMAL` | `connected` | 1,90 m | 2,5 mm |
+| 2 | `DEGRADACAO_LORA` | `debouncing` / `fallback_active` | 2,30 m | 5,0 mm |
+| 3 | `INDISPONIBILIDADE_DUPLA` | `unavailable` | 2,70 m | 7,5 mm |
+
+Cada payload é validado por `TelemetryValidator` contra contrato estrito (UUID v4, ISO 8601 UTC, limites físicos). O módulo `PayloadCompactor` demonstra a economia de ~60% no tamanho do JSON para redes de rádio LPWAN.
+
+### 2. Pipeline Geoespacial HAND (`gis/`)
+
+O script `calculoHandInteiro.py` executa o pipeline completo de modelagem hidrológica via WhiteboxTools (D8 Flow Accumulation, Stream Extraction, Elevation Above Stream) e `export_hand_json.py` converte o raster em matriz de pontos espacializada.
+
+**Tabela de classificação HAND:**
+
+| Classe | Faixa HAND | Peso de Risco | Interpretação |
+|---|---|---|---|
+| `ALTA` | 0 – 3 m | 1,00 | Zona de várzea — inundação frequente |
+| `MEDIA` | 3 – 10 m | 0,60 | Zona de risco moderado |
+| `BAIXA` | 10 – 25 m | 0,25 | Baixa suscetibilidade |
+| `MUITO_BAIXA` | > 25 m | 0,05 | Terreno elevado — risco desprezível |
+
+### 3. Motor de Risco Multicritério (`IOT/risk_engine.py`)
+
+O `RiskEngine` cruza a telemetria com a matriz HAND indexada via **KDTree em coordenadas UTM 22S**:
+- **Com dado HAND:** classifica em SEGURO, ATENÇÃO, ALERTA ou CRÍTICO com justificativa explicável (`risk_justification`).
+- **Modo de contingência:** ativação automática de fallback por regra puramente telemétrica caso o ponto HAND não esteja no raio de 500m.
+
+---
+
+## 🚨 Como o Risco é Identificado e o Alerta é Gerado
+
+O risco é **geoespacialmente fundamentado**: o mesmo nível de água em terrenos diferentes recebe classificações distintas. Um sensor marcando 1,9m em várzea (HAND < 3m, peso 1,00) é `ALERTA`; o mesmo valor em terreno elevado (HAND > 10m) seria `ATENÇÃO`.
+
+### Exemplo real de saída do Risk Engine
+
+```json
+{
+  "station_id": "ATG_BLU_001",
+  "readings": { "water_level_m": 2.7, "rainfall_accumulated_mm": 7.5 },
+  "risk_assessment": {
+    "hand_value_m": 1.79,
+    "hand_risk_factor": 1.0,
+    "topographic_susceptibility": "ALTA",
+    "hand_match_distance_m": 29.44,
+    "risk_classification": "CRITICO",
+    "risk_justification": "Nível crítico de água (2.7m) superou o limiar de emergência. Suscetibilidade local HAND: ALTA (1.79m).",
+    "contingency_mode": false
+  }
+}
 ```
 
 ---
 
-## ⚙️ Guia de Instalação e Execução Local
+## 🖥️ Como o Usuário Visualiza a Informação
 
-### 1. Pré-requisitos
-* **Node.js**: v18+ 
-* **Python**: v3.10+ (recomendado 3.12/3.13)
-* **PostgreSQL**: v14+ com extensão **PostGIS** habilitada (ou Docker)
+- **Mapa Folium interativo** (`data/mapa_estacoes.html`) — exibe os nós de monitoramento com popups de status de rede, nível de água e chuva por ciclo, com camada de estado consolidado (último registro de cada estação);
+- **JSON processado** (`telemetry_processed_with_risk.json`) — consumível por qualquer dashboard web ou sistema GIS, com classificação de risco e justificativa explicável para cada leitura.
 
 ---
 
-### 2. Configuração do Banco de Dados (PostGIS)
+## 📂 Estrutura do Repositório (`branch: Min_Poc`)
 
-1. Crie o banco de dados PostgreSQL com o nome `americas_techguard` (ou altere no arquivo `.env`):
-   ```sql
-   CREATE DATABASE americas_techguard;
-   ```
-2. Execute os scripts de criação de tabelas e carga inicial na ordem:
-   ```bash
-   psql -U postgres -d americas_techguard -f database/migrations/001_create_postgis_tables.sql
-   psql -U postgres -d americas_techguard -f database/seeds/01_estacoes_blumenau.sql
-   ```
-
----
-
-### 3. Execução da API Backend (`server/`)
-
-1. Navegue até a pasta do servidor e instale as dependências:
-   ```bash
-   cd server
-   npm install
-   ```
-2. Configure o arquivo `.env` com as credenciais do seu banco de dados:
-   ```env
-   PORT=3000
-   DB_HOST=localhost
-   DB_PORT=5432
-   DB_USER=postgres
-   DB_PASSWORD=sua_senha
-   DB_NAME=americas_techguard
-   ```
-3. Inicie o servidor em modo de desenvolvimento:
-   ```bash
-   npm run dev
-   ```
-4. Verifique a saúde da API acessando: `http://localhost:3000/health`
+```
+Americas-TechGuard-PoC/
+│
+├── IOT/
+│   ├── simulator.py               # Simulador de telemetria IoT (3 estações, 3 cenários)
+│   └── risk_engine.py             # Motor de risco geoespacial multicritério
+│
+├── gis/
+│   ├── calculoHandInteiro.py      # Pipeline completo HAND (DEM → WhiteboxTools → raster)
+│   └── export_hand_json.py        # Exportação do raster HAND para JSON consumível
+│
+├── data/
+│   ├── input/
+│   │   └── shelters.json                       # Abrigos municipais simulados (4 unidades)
+│   └── processed/
+│       ├── hand_metrics.json                   # Matriz HAND (~21 MB)
+│       ├── telemetry_output.json               # Saída bruta do simulator.py
+│       └── telemetry_processed_with_risk.json  # Telemetria enriquecida com risco
+│
+├── requirements.txt               # Dependências Python do projeto
+└── README.md                      # Este documento
+```
 
 ---
 
-### 4. Execução do Módulo GIS e Pipeline HAND (`gis/`)
+## 🛠️ Linguagens, Bibliotecas e Dependências
 
-1. Navegue até a pasta `gis/` e instale as dependências Python:
-   ```bash
-   cd gis
-   pip install -r requirements.txt
-   ```
-2. Execute o pipeline completo HAND (Download de vetores, DEM, cálculo hidrológico e mapa de suscetibilidade):
-   ```bash
-   python calculoHandInteiro.py
-   ```
-   * O script gerará automaticamente os rasters na pasta `outputs_hand/` e o mapa interativo `mapa_ottobacias_blumenau.html`.
-
----
-
-### 5. Execução do Simulador IoT (`simulator/`)
-
-1. Navegue até a pasta `simulator/` e instale os pacotes:
-   ```bash
-   cd simulator
-   pip install -r requirements.txt
-   ```
-2. Execute a simulação de sensores:
-   ```bash
-   python main.py
-   ```
+| Categoria | Tecnologia |
+|---|---|
+| Linguagem | Python 3.10+ |
+| GIS / Hidrologia | WhiteboxTools |
+| Geoespacial | GeoPandas, Rasterio, Fiona, Shapely |
+| Projeção de coordenadas | PyProj |
+| Indexação espacial | SciPy (KDTree) |
+| DEM via STAC | planetary-computer, pystac-client |
+| Rasters | rioxarray, xarray, numpy |
+| Mapas interativos | Folium |
+| IoT / MQTT | paho-mqtt |
 
 ---
 
-## 📡 Endpoints Principais da API REST
+## 🚀 Guia de Execução da PoC
 
-| Método | Rota | Descrição |
-| :--- | :--- | :--- |
-| `GET` | `/health` | Checagem de conectividade com a API e o banco PostGIS |
-| `GET` | `/api/v1/estacoes` | Retorna os nós de monitoramento em formato **GeoJSON** |
-| `POST` | `/api/v1/telemetria` | Ingestão de leituras de nível de água e chuva transmitidas pelos sensores |
+### 1. Instalar dependências
+```bash
+pip install -r requirements.txt
+```
+
+### 2. Executar Simulador IoT
+```bash
+python IOT/simulator.py
+```
+*Gera `data/processed/telemetry_output.json` e `data/mapa_estacoes.html`.*
+
+### 3. Executar Motor de Risco
+```bash
+python IOT/risk_engine.py
+```
+*Gera `data/processed/telemetry_processed_with_risk.json`.*
+
+### 4. Visualizar o Mapa Interativo
+Abra o arquivo `data/mapa_estacoes.html` no navegador.
+
+---
+
+## 🧩 Status Atual dos Componentes Funcionais (O que está pronto vs. O que falta)
+
+| Componente | Status Atual (`Min_Poc`) | Escopo Implementado |
+|---|---|---|
+| **Simulador IoT** | ✅ Pronto | 3 estações, 3 cenários de falha, validação de contrato UUIDv4 |
+| **Compactador LPWAN** | ✅ Pronto | Redução estimada de ~60% de payload JSON para rádio |
+| **Pipeline HAND GIS** | ✅ Pronto | DEM Copernicus → WhiteboxTools → Raster HAND |
+| **Matriz Spatial HAND** | ✅ Pronto | Conversão para JSON espacializado (~21 MB) |
+| **Engine de Risco KDTree** | ✅ Pronto | Busca espacial UTM Zona 22S + Regras Multicritério |
+| **Modo de Contingência** | ✅ Pronto | Fallback automático quando dado HAND ausente |
+| **Mapa Folium** | ✅ Pronto | Mapa HTML interativo por ciclo + consolidado |
+| **Dashboard React/Web** | 🔲 Futuro | Interface gráfica web para navegação do usuário |
+| **API REST Node.js** | 🔲 Futuro | Servidor para ingestão e distribuição contínua |
+| **Banco PostGIS** | 🔲 Futuro | Banco de dados espacial persistente |
+| **App Mobile Expo** | 🔲 Futuro | Aplicativo móvel para Cidadão e Defesa Civil |
+
+---
+
+## ⚠️ Limitações Atuais da PoC
+
+1. **Dados simulados:** telemetria é gerada deterministicamente por software, sem hardware físico real.
+2. **Rede IoT em software:** o comportamento de LoRaWAN e Meshtastic é representado por lógica simulada.
+3. **Escala local (3 nós):** topologia cobrindo 3 pontos representativos de Blumenau.
+4. **Resolução DEM 30m:** modelo HAND construído com Copernicus GLO-30 (LiDAR local traria mais detalhe).
+5. **Sem persistência em BD:** nesta versão, a persistência é feita via arquivos JSON estruturados.
+
+---
+
+## ✨ Diferenciais Técnicos da Solução
+
+- **Classificação espacialmente fundamentada:** risco correlacionado com a topografia local (HAND) e não apenas altura da água;
+- **Resiliência por design:** failover automático LoRaWAN ➔ Meshtastic com mecanismo de debounce;
+- **Motor Explicável:** cada resultado traz a justificativa textual (`risk_justification`) da decisão;
+- **Modo de Contingência:** garante que falhas de dados geoespaciais nunca silenciem um alerta.
+
+---
+---
+
+# 🔵 PARTE 2: PLANEJAMENTO FUTURO & ARQUITETURA TARGET (`Relatório Técnico`)
+
+Esta segunda parte apresenta o **planejamento de evolução futura** e a **especificação arquitetural da plataforma expandida** (Full-Stack).
+
+---
+
+> [!NOTE]
+> **Aviso de Escopo:** Os tópicos abaixo descrevem a especificação conceitual, modelo de dados e planejamento de rotas/telas projetados para a versão completa do sistema (Mobile + API REST + PostGIS), a ser desenvolvida nas próximas etapas do projeto.
+
+---
+
+## 📑 Arquitetura Expandida Target (Mobile + Web + API REST + PostGIS)
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│              FRONTEND (Expo / React Native / Web)               │
+│  • Visitante            • Cidadão            • Defesa Civil     │
+└────────────────────────────────┬────────────────────────────────┘
+                                 │ HTTP / JSON (API REST)
+┌────────────────────────────────▼────────────────────────────────┐
+│                   BACKEND (Node.js / Express)                   │
+│  • Autenticação & Sessões     • Ingestão de Telemetria          │
+│  • Rotas de Alertas & Abrigos • Serviços CRUD GeoJSON           │
+└────────────────────────────────┬────────────────────────────────┘
+                                 │ SQL / PostGIS
+┌────────────────────────────────▼────────────────────────────────┐
+│           BANCO DE DADOS ESPACIAL (PostgreSQL + PostGIS)        │
+│  • Banco: americas_techguard                                    │
+│  • Geometrias: EPSG:4326 (Point, Polygon, MultiPolygon)         │
+└────────────────────────────────▲────────────────────────────────┘
+                                 │ Telemetria & GeoJSON
+┌────────────────────────────────┴────────────────────────────────┐
+│               SIMULADOR & GIS (Python Engine)                   │
+│  • WhiteboxTools / HAND        • Engine de Risco                │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 👤 Especificação dos Perfis de Usuários (Futuro)
+
+1. **Visitante (Sem autenticação):** Acesso a mapa de risco público, lista de abrigos ativos e alertas gerais.
+2. **Cidadão (Usuário Autenticado):** Painel pessoal com alertas da sua localização, detalhes de abrigos e envio de solicitações de novos abrigos comunitários.
+3. **Operador da Defesa Civil (Painel Administrativo):** Dashboard operacional em tempo real, aprovação/recusa de abrigos comunitários e emissão/encerramento de alertas públicos.
+
+---
+
+## 📱 Planejamento das 25 Telas / Rotas do Aplicativo
+
+| Grupo de Rotas | Telas Planejadas |
+|---|---|
+| **Públicas (9)** | `index`, `splash`, `access`, `login`, `register`, `forgot-password`, `reset-password`, `verify-email`, `privacy-policy` |
+| **Cidadão (9)** | `home`, `map`, `shelters`, `shelter-details`, `register-shelter`, `alerts`, `profile`, `edit-profile`, `settings` |
+| **Defesa Civil (7)** | `dashboard`, `pending-shelters`, `shelter-review`, `registered-shelters`, `telemetry`, `risk-analysis`, `alerts-management` |
+
+---
+
+## 🗄️ Modelo do Banco de Dados Espacial (`PostgreSQL + PostGIS`)
+
+A arquitetura do banco `americas_techguard` prevê 9 tabelas relacionais e espaciais:
+- `users` (contas e papéis `citizen`/`civil_defense`/`administrator`);
+- `stations` (nós com geometria `GEOMETRY(Point, 4326)`);
+- `sensor_readings` (historização de leituras de água e chuva);
+- `shelters` (abrigos oficiais com geometria espacial);
+- `shelter_requests` (fluxo de aprovação de abrigos enviados por cidadãos);
+- `alerts` (gerenciamento de alertas com níveis de severidade `low`/`moderate`/`high`/`critical`);
+- `risk_assessments`, `password_reset_tokens`, `refresh_tokens`.
+
+---
+
+## 🔭 Roadmap dos Próximos Passos de Desenvolvimento
+
+1. **Fase 1 — Dashboard Web Local:** Construção do dashboard HTML/JS consumindo os JSONs gerados localmente.
+2. **Fase 2 — Backend API REST & PostGIS:** Implementação do servidor Node.js/Express e criação do banco `americas_techguard`.
+3. **Fase 3 — Aplicativo Mobile Expo:** Desenvolvimento das telas React Native para cidadãos e Defesa Civil.
+4. **Fase 4 — Integração MQTT Real:** Conexão com brokers e gateways LoRaWAN físicos (RAK/Heltec).
+5. **Fase 5 — Nowcasting Hidrológico:** Integração de dados de radar/previsão meteorológica para horizonte de 1–6h.
+6. **Fase 6 — Alertas Push:** Envio de notificações via Firebase (FCM) / SMS.
+
+---
+
+## 🔬 Referências Científicas e Técnicas
+
+1. **Development of a smart sensing unit for LoRaWAN-based IoT flood monitoring and warning system in catchment areas**  
+   *Internet of Things and Cyber-Physical Systems*, 2023. DOI: [10.1016/j.iotcps.2023.04.005](https://www.sciencedirect.com/science/article/pii/S2667345223000263)
+
+2. **A Meshtastic-based LoRa Mesh System for Smart Campus Applications: From Solar-Powered Sensing to Containerized Data Management**  
+   *arXiv*, 2026. Link: [https://arxiv.org/abs/2605.20379](https://arxiv.org/abs/2605.20379)
+
+3. **Documentações de Referência:**
+   - [Meshtastic MQTT/JSON Configuration](https://meshtastic.org/docs/software/integrations/mqtt/)
+   - [Meshtastic Telemetry Module](https://meshtastic.org/docs/configuration/module/telemetry/)
+   - [WhiteboxTools User Manual — Hydrological Analysis](https://www.whiteboxgeo.com/manual/wbt_book/available_tools/hydrological_analysis.html)
+   - [Modelo HAND — Nobre et al., 2011](https://doi.org/10.1029/2011WR011275)
 
 ---
 
@@ -195,35 +384,4 @@ Americas-TechGuard-Plataforma-para-Monitoramento-e-apoio-a-Inundacoes-PoC/
 
 Este projeto é disponibilizado sob a licença **MIT**. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
 
-
-
-Americas-TechGuard-PoC/
-│
-├── index.html                 # Dashboard principal
-│
-├── CSS/
-│   └── style.css              # Estilo
-│
-├── js/
-│   ├── main.js                # Lógica da tela
-│   └── data.js                # Leitura dos JSON
-│
-├── data/
-│   ├── stations.json          # Sensores cadastrados
-│   ├── telemetry.json         # Leituras IoT
-│   ├── risk_maps.json         # Resultado HAND
-│   ├── alerts.json            # Alertas gerados
-│   └── shelters.json          # Abrigos
-│
-├── iot/
-│   ├── simulator.py           # Seu simulador atual
-│   └── risk_engine.py         # Cruzamento IoT + HAND
-│
-├── gis/
-│   ├── calculoHandInteiro.py  # Seu pipeline atual
-│   └── output_maps/
-│       ├── mapa_ottobacias_blumenau.html
-│       ├── mapa_suscetibilidade_hand_blumenau.html
-│       └── relevo_blumenau_3d.html
-│
-└── README.md
+</div>
