@@ -396,13 +396,19 @@ if __name__ == "__main__":
         "telemetria": todos_payloads,
     }
 
-    caminho_telemetria = DATA_DIR / "telemetry_output.json"
+    processed_dir = DATA_DIR / "processed"
+    processed_dir.mkdir(parents=True, exist_ok=True)
+
+    caminho_telemetria_processed = processed_dir / "telemetry_output.json"
+    caminho_telemetria_root = DATA_DIR / "telemetry_output.json"
     caminho_mapa = DATA_DIR / "mapa_estacoes.html"
 
     print("\n[5/5] Escrevendo arquivos de saída...")
-    with open(caminho_telemetria, "w", encoding="utf-8") as f:
+    with open(caminho_telemetria_processed, "w", encoding="utf-8") as f:
         json.dump(saida_simulacao, f, indent=2, ensure_ascii=False)
-    print(f"  ├─ Arquivo JSON gerado: {caminho_telemetria}")
+    with open(caminho_telemetria_root, "w", encoding="utf-8") as f:
+        json.dump(saida_simulacao, f, indent=2, ensure_ascii=False)
+    print(f"  ├─ Arquivo JSON gerado: {caminho_telemetria_processed}")
 
     gerar_mapa_interativo(todos_payloads, caminho_mapa)
     print(f"  └─ Mapa Folium gerado: {caminho_mapa}")
