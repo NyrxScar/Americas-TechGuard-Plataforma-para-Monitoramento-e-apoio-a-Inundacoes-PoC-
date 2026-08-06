@@ -1,4 +1,4 @@
-# 🛡️ Americas TechGuard
+# Americas TechGuard
 ## Plataforma para Monitoramento e Apoio a Inundações — Prova de Conceito
 
 [![Status](https://img.shields.io/badge/Status-PoC%20Funcional-success?style=for-the-badge)](https://github.com/NyrxScar/Americas-TechGuard-Plataforma-para-Monitoramento-e-apoio-a-Inundacoes-PoC-)
