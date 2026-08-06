@@ -19,6 +19,7 @@ HAND_PATH = (
 OUTPUT_PATH = (
     BASE_DIR.parent
     / "data"
+    / "processed"
     / "hand_metrics.json"
 )
 AREA_NAME = "Blumenau/SC"
@@ -408,6 +409,19 @@ def exportar_hand_para_json(
         json.dump(
             documento,
             arquivo,
+            ensure_ascii=False,
+            indent=2,
+        )
+
+    alt_output_path = BASE_DIR.parent / "data" / "hand_metrics.json"
+    with alt_output_path.open(
+        "w",
+        encoding="utf-8",
+    ) as arquivo_alt:
+
+        json.dump(
+            documento,
+            arquivo_alt,
             ensure_ascii=False,
             indent=2,
         )
